@@ -1,0 +1,64 @@
+// Relatio CRM - Service Worker
+// Version this to bust cache when you deploy updates
+const CACHE_VERSION = 'relatio-v1';
+const CACHE_NAME = `${CACHE_VERSION}-cache`;
+
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+];
+
+// Install: cache static assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activate: remove old caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+// Fetch: network-first for API calls, cache-first for assets
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Always go network for Anthropic API
+  if (url.hostname === 'api.anthropic.com') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Cache-first for static assets
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      return cached || fetch(event.request).then((response) => {
+        // Cache successful GET responses
+        if (event.request.method === 'GET' && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      });
+    }).catch(() => {
+      // Offline fallback for navigation
+      if (event.request.mode === 'navigate') {
+        return caches.match('/index.html');
+      }
+    })
+  );
+});
