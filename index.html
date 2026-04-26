@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#0d0d0d"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="Relatio CRM"/>
-<title>Relatio CRM</title>
+<title>Relatio CRM — Financial</title>
 <link rel="manifest" href="/manifest.json"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'DM Sans',sans-serif;background:#0d0d0d;color:#e8e8e8;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:2px}
-input,textarea,select,button{font-family:inherit}
+input,textarea,select,button,label{font-family:inherit}
 input::placeholder,textarea::placeholder{color:#444}
 select option{background:#111}
 .card{background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:20px;margin-bottom:16px}
@@ -21,410 +21,989 @@ select option{background:#111}
 .input{background:#0d0d0d;border:1px solid #2e2e2e;border-radius:6px;padding:9px 12px;color:#e8e8e8;font-size:13px;width:100%;outline:none}
 .btn-primary{padding:8px 16px;border-radius:6px;border:none;background:#e8e8e8;color:#0d0d0d;cursor:pointer;font-size:13px;font-weight:700}
 .btn-secondary{padding:8px 16px;border-radius:6px;border:1px solid #2e2e2e;background:transparent;color:#aaa;cursor:pointer;font-size:13px;font-weight:600}
+.btn-danger{padding:8px 16px;border-radius:6px;border:1px solid #3a1a1a;background:transparent;color:#e07070;cursor:pointer;font-size:13px;font-weight:600}
 .pill{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700}
+.prod-tag{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:2px;display:inline-block}
 .row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:background .15s}
 .row:hover{background:#141414;border-color:#1e1e1e}
 .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0}
 .nav-btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
-.modal-overlay{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
-.modal{background:#111;border:1px solid #2e2e2e;border-radius:14px;padding:28px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal-overlay{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;overflow-y:auto}
+.modal{background:#111;border:1px solid #2e2e2e;border-radius:14px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
 .health-track{flex:1;height:4px;background:#2a2a2a;border-radius:2px}
 .health-fill{height:100%;border-radius:2px;transition:width .5s}
-@media(max-width:640px){.desktop-nav{display:none!important}.mobile-nav{display:flex!important}.hide-mobile{display:none!important}}
+.tab{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:transparent;color:#555;transition:all .15s}
+.tab.active{background:#1e1e1e;color:#e8e8e8}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px}
+.checkbox-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid #1e1e1e;cursor:pointer;font-size:12px;color:#aaa}
+.checkbox-item:hover{border-color:#2e2e2e;color:#e8e8e8}
+.checkbox-item.selected{border-color:#7ec8c8;color:#7ec8c8;background:#7ec8c822}
+.alert-card{background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px;margin-bottom:8px}
+.section-title{font-size:16px;font-weight:700;margin-bottom:16px;color:#e8e8e8}
+@media(max-width:640px){.desktop-nav{display:none!important}.mobile-nav{display:flex!important}.hide-mobile{display:none!important}.two-col{grid-template-columns:1fr!important}}
 @media(min-width:641px){.mobile-nav{display:none!important}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#e07070;color:#fff;font-size:10px;font-weight:700;margin-left:4px}
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- Header -->
   <div id="header" style="background:#111;border-bottom:1px solid #1e1e1e;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100">
-    <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.08em">RELATIO · CRM</div>
+    <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.08em">RELATIO · FINANCE</div>
     <div class="desktop-nav" id="desktopNav" style="display:flex;gap:4px"></div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn-primary hide-mobile" onclick="openAddContact()" style="padding:6px 14px;font-size:13px">+ Add</button>
+      <button class="btn-primary hide-mobile" onclick="openAddContact()" style="padding:6px 14px;font-size:13px">+ Add Client</button>
       <button class="btn-secondary" onclick="openSettings()" style="padding:6px 10px;font-size:16px;border-color:#1e1e1e">⚙</button>
     </div>
   </div>
-
-  <!-- Main -->
-  <div id="main" style="padding:16px;max-width:1200px;margin:0 auto;min-height:calc(100vh - 52px - 60px)"></div>
-
-  <!-- Mobile Nav -->
+  <div id="main" style="padding:16px;max-width:1400px;margin:0 auto;padding-bottom:80px"></div>
   <div class="mobile-nav" style="position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #1e1e1e;display:flex;justify-content:space-around;padding:6px 0 20px;z-index:100">
-    <button onclick="setView('dashboard')" id="mnav-dashboard" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">🏠</span>Home</button>
-    <button onclick="setView('pipeline')" id="mnav-pipeline" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">📊</span>Pipeline</button>
-    <button onclick="setView('contacts')" id="mnav-contacts" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">👥</span>Contacts</button>
-    <button onclick="setView('ai')" id="mnav-ai" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">✦</span>AI</button>
-    <button onclick="openAddContact()" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#e8e8e8;font-size:10px;font-weight:600"><span style="font-size:18px">＋</span>Add</button>
+    <button onclick="setView('dashboard')" id="mnav-dashboard" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">🏠</span>Home</button>
+    <button onclick="setView('pipeline')" id="mnav-pipeline" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">📊</span>Pipeline</button>
+    <button onclick="setView('products')" id="mnav-products" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">📦</span>Products</button>
+    <button onclick="setView('renewals')" id="mnav-renewals" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">🔔</span>Alerts</button>
+    <button onclick="setView('contacts')" id="mnav-contacts" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">👥</span>Clients</button>
+    <button onclick="setView('ai')" id="mnav-ai" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#555;font-size:9px;font-weight:600"><span style="font-size:16px">✦</span>AI</button>
+    <button onclick="openAddContact()" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;cursor:pointer;color:#e8e8e8;font-size:9px;font-weight:600"><span style="font-size:16px">＋</span>Add</button>
   </div>
 </div>
-
-<!-- Modals -->
 <div id="modal-container"></div>
 
 <script>
-// ── Data ────────────────────────────────────────────────────────────────────
+// ── Constants ────────────────────────────────────────────────────────────────
 const STAGES = ["Lead","Proposal","Negotiation","Active","Closed Won","Churned"];
 const STAGE_COLORS = {Lead:"#c4a8d4",Proposal:"#7ec8c8",Negotiation:"#f4c97a",Active:"#a8d5a2","Closed Won":"#5ba85b",Churned:"#c4c4c4"};
 const COLORS = ["#e8a87c","#7ec8c8","#a8d5a2","#c4a8d4","#f4c97a","#f4a261","#87b4e8","#e887b4"];
-const SEED = [
-  {id:1,name:"Sarah Chen",company:"Bloom Studio",role:"Creative Director",email:"sarah@bloomstudio.co",phone:"+91 98765 43210",stage:"Active",value:95000,lastContact:"2026-04-18",nextFollowUp:"2026-04-28",tags:["Design","Retainer"],color:"#e8a87c",notes:[{id:1,date:"2026-04-18",text:"Discussed Q2 brand refresh. She loves the moodboard direction."},{id:2,date:"2026-04-10",text:"Intro call went well. Budget around ₹95k."}],health:92},
-  {id:2,name:"Marcus Webb",company:"Northline Realty",role:"Managing Partner",email:"m.webb@northline.com",phone:"+91 98765 43211",stage:"Proposal",value:72000,lastContact:"2026-04-14",nextFollowUp:"2026-04-25",tags:["Real Estate"],color:"#7ec8c8",notes:[{id:1,date:"2026-04-14",text:"Sent proposal. Awaiting feedback."}],health:65},
-  {id:3,name:"Priya Nair",company:"Verdant Foods",role:"Head of Marketing",email:"priya.nair@verdant.com",phone:"+91 98765 43212",stage:"Negotiation",value:180000,lastContact:"2026-04-20",nextFollowUp:"2026-04-26",tags:["CPG","High Value"],color:"#a8d5a2",notes:[{id:1,date:"2026-04-20",text:"Counter-offer received. She wants 6-month retainer at ₹30,000/mo."}],health:78},
-  {id:4,name:"Tom Okafor",company:"Kira Legal",role:"Partner",email:"tokafor@kiralegal.com",phone:"+91 98765 43213",stage:"Lead",value:35000,lastContact:"2026-03-30",nextFollowUp:"2026-04-27",tags:["Legal"],color:"#c4a8d4",notes:[],health:40},
-  {id:5,name:"Elena Vasquez",company:"Dune Hospitality",role:"CEO",email:"elena@dunehospitality.com",phone:"+91 98765 43214",stage:"Closed Won",value:300000,lastContact:"2026-04-22",nextFollowUp:"2026-05-10",tags:["VIP"],color:"#f4a261",notes:[{id:1,date:"2026-04-22",text:"Project kicked off!"}],health:97},
+const RISK_PROFILES = ["Conservative","Moderate","Aggressive","Very Aggressive"];
+const INCOME_BRACKETS = ["< ₹5L","₹5L-10L","₹10L-25L","₹25L-50L","₹50L-1Cr","₹1Cr+"];
+const CLIENT_SEGMENTS = ["Retail","Mass Affluent","HNI","Ultra HNI"];
+
+const PRODUCTS = [
+  {id:"health_ins",name:"Health Insurance",icon:"🏥",color:"#e87c7c",category:"Insurance"},
+  {id:"motor_ins",name:"Motor Insurance",icon:"🚗",color:"#e8a87c",category:"Insurance"},
+  {id:"life_ins",name:"Life Insurance",icon:"❤️",color:"#e87ca8",category:"Insurance"},
+  {id:"term_ins",name:"Term Insurance",icon:"🛡️",color:"#c4a8d4",category:"Insurance"},
+  {id:"home_ins",name:"Home Insurance",icon:"🏠",color:"#a8b4d4",category:"Insurance"},
+  {id:"travel_ins",name:"Travel Insurance",icon:"✈️",color:"#87b4e8",category:"Insurance"},
+  {id:"mf",name:"Mutual Funds",icon:"📈",color:"#7ec8c8",category:"Investment"},
+  {id:"equity",name:"Equity Portfolio",icon:"📊",color:"#a8d5a2",category:"Investment"},
+  {id:"pms",name:"PMS",icon:"💼",color:"#5ba85b",category:"Investment"},
+  {id:"nps",name:"NPS",icon:"👴",color:"#a8d5a2",category:"Investment"},
+  {id:"fd",name:"Fixed Deposit",icon:"🏦",color:"#f4c97a",category:"Investment"},
+  {id:"ulip",name:"ULIP",icon:"🔗",color:"#f4a261",category:"Investment"},
+  {id:"home_loan",name:"Home Loan",icon:"🏡",color:"#e8a87c",category:"Loan"},
+  {id:"personal_loan",name:"Personal Loan",icon:"💰",color:"#f4c97a",category:"Loan"},
+  {id:"business_loan",name:"Business Loan",icon:"🏢",color:"#c4a8d4",category:"Loan"},
+  {id:"lap",name:"Loan Against Property",icon:"📋",color:"#87b4e8",category:"Loan"},
 ];
 
-// ── State ───────────────────────────────────────────────────────────────────
+const SEED = [
+  {id:1,name:"Rajesh Sharma",company:"Sharma Enterprises",role:"Business Owner",email:"rajesh@sharmaent.com",phone:"+91 98765 43210",whatsapp:"+91 98765 43210",stage:"Active",value:850000,aum:2500000,commission:42500,lastContact:"2026-04-18",nextFollowUp:"2026-04-28",
+   products:["health_ins","life_ins","mf","equity"],prospectProducts:["term_ins","pms"],
+   birthday:"1975-03-15",anniversary:"2000-11-20",children:2,familyMembers:4,spouseName:"Sunita Sharma",
+   riskProfile:"Moderate",incomeBracket:"₹50L-1Cr",segment:"HNI",kycStatus:"Complete",panNumber:"ABCPS1234D",
+   renewalDate:"2026-08-15",premiumDue:"2026-05-01",sipDate:5,
+   referredBy:"",referrals:[],goals:["Retirement","Child Education"],
+   tags:["HNI","Insurance","MF"],color:"#e8a87c",
+   notes:[{id:1,date:"2026-04-18",text:"Discussed portfolio rebalancing. Interested in PMS for equity allocation above ₹50L."},{id:2,date:"2026-04-10",text:"Health insurance renewal due in Aug. Family floater ₹20L cover."}],health:92},
+  {id:2,name:"Priya Mehta",company:"",role:"Software Engineer",email:"priya.mehta@techco.com",phone:"+91 87654 32109",whatsapp:"+91 87654 32109",stage:"Proposal",value:120000,aum:800000,commission:8500,lastContact:"2026-04-14",nextFollowUp:"2026-04-25",
+   products:["mf","health_ins"],prospectProducts:["term_ins","nps"],
+   birthday:"1988-07-22",anniversary:"2015-02-14",children:1,familyMembers:3,spouseName:"Amit Mehta",
+   riskProfile:"Aggressive",incomeBracket:"₹10L-25L",segment:"Mass Affluent",kycStatus:"Complete",panNumber:"BCDPM5678E",
+   renewalDate:"2026-09-10",premiumDue:"2026-06-01",sipDate:10,
+   referredBy:"Rajesh Sharma",referrals:[],goals:["Child Education","Home Purchase"],
+   tags:["SIP","Young Professional"],color:"#7ec8c8",
+   notes:[{id:1,date:"2026-04-14",text:"Wants to start term insurance. Budget ₹15k/yr. Sent proposal."}],health:72},
+  {id:3,name:"Suresh Patel",company:"Patel Motors",role:"Proprietor",email:"suresh@patelmotors.com",phone:"+91 76543 21098",whatsapp:"+91 76543 21098",stage:"Active",value:320000,aum:5000000,commission:85000,lastContact:"2026-04-20",nextFollowUp:"2026-04-26",
+   products:["motor_ins","health_ins","life_ins","mf","fd","business_loan"],prospectProducts:["equity","pms"],
+   birthday:"1968-12-05",anniversary:"1995-05-12",children:3,familyMembers:5,spouseName:"Rekha Patel",
+   riskProfile:"Conservative",incomeBracket:"₹1Cr+",segment:"HNI",kycStatus:"Complete",panNumber:"CDESP9012F",
+   renewalDate:"2026-07-01",premiumDue:"2026-05-15",sipDate:1,
+   referredBy:"",referrals:["Priya Mehta"],goals:["Retirement","Business Expansion"],
+   tags:["HNI","Multi-product","VIP"],color:"#a8d5a2",
+   notes:[{id:1,date:"2026-04-20",text:"Motor insurance for 3 vehicles due July. Business loan renewal discussion pending."}],health:88},
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
 let state = {
-  contacts: JSON.parse(localStorage.getItem('relatio-contacts') || 'null') || SEED,
-  settings: JSON.parse(localStorage.getItem('relatio-settings') || '{}'),
+  contacts: JSON.parse(localStorage.getItem('relatio-fin-contacts') || 'null') || SEED,
+  settings: JSON.parse(localStorage.getItem('relatio-fin-settings') || '{}'),
   view: 'dashboard',
   selectedId: null,
   chatHistory: [],
+  contactTab: 'overview',
 };
 
 function save() {
-  localStorage.setItem('relatio-contacts', JSON.stringify(state.contacts));
-  localStorage.setItem('relatio-settings', JSON.stringify(state.settings));
+  localStorage.setItem('relatio-fin-contacts', JSON.stringify(state.contacts));
+  localStorage.setItem('relatio-fin-settings', JSON.stringify(state.settings));
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const daysAgo = d => Math.floor((new Date() - new Date(d)) / 86400000);
 const daysUntil = d => Math.ceil((new Date(d) - new Date()) / 86400000);
-const fmt = n => '₹' + Number(n).toLocaleString('en-IN');
-const fmtDate = s => new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN');
+const fmtDate = s => s ? new Date(s).toLocaleDateString('en-IN',{month:'short',day:'numeric'}) : '—';
+const fmtDateFull = s => s ? new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
 const initials = n => n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-const getContact = id => state.contacts.find(c => c.id === id);
+const getC = id => state.contacts.find(c=>c.id===id);
+const getProduct = id => PRODUCTS.find(p=>p.id===id);
 
-function avatar(c, size=40) {
+function avatar(c,size=40){
   return `<div class="avatar" style="width:${size}px;height:${size}px;background:${c.color}22;border:2px solid ${c.color}55;font-size:${size*.34}px;color:${c.color}">${initials(c.name)}</div>`;
 }
-function healthBar(v) {
-  const col = v>=80?'#5ba85b':v>=55?'#f4c97a':'#e07070';
+function healthBar(v){
+  const col=v>=80?'#5ba85b':v>=55?'#f4c97a':'#e07070';
   return `<div style="display:flex;align-items:center;gap:8px"><div class="health-track"><div class="health-fill" style="width:${v}%;background:${col}"></div></div><span style="font-size:11px;color:${col};font-weight:700;min-width:28px">${v}%</span></div>`;
 }
-function stagePill(stage) {
+function stagePill(stage){
   return `<span class="pill" style="background:${STAGE_COLORS[stage]}22;color:${STAGE_COLORS[stage]}">${stage}</span>`;
 }
-
-// ── Navigation ───────────────────────────────────────────────────────────────
-function setView(v) {
-  state.view = v;
-  render();
+function productTag(pid){
+  const p=getProduct(pid);
+  if(!p)return'';
+  return `<span class="prod-tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}44">${p.icon} ${p.name}</span>`;
+}
+function daysUntilBirthday(dateStr){
+  if(!dateStr)return null;
+  const today=new Date();
+  const bday=new Date(dateStr);
+  const next=new Date(today.getFullYear(),bday.getMonth(),bday.getDate());
+  if(next<today)next.setFullYear(today.getFullYear()+1);
+  return Math.ceil((next-today)/86400000);
 }
 
-function buildNav() {
-  const navs = [['dashboard','Dashboard'],['pipeline','Pipeline'],['contacts','Contacts'],['ai','AI Chat']];
-  document.getElementById('desktopNav').innerHTML = navs.map(([v,l]) =>
+// ── Alerts ────────────────────────────────────────────────────────────────────
+function getAlerts(){
+  const alerts=[];
+  state.contacts.forEach(c=>{
+    // Follow-up overdue
+    if(daysUntil(c.nextFollowUp)<=0&&c.stage!=='Churned'&&c.stage!=='Closed Won')
+      alerts.push({type:'followup',priority:'high',contact:c,msg:`Follow-up overdue by ${Math.abs(daysUntil(c.nextFollowUp))} days`,icon:'📞'});
+    // Renewal in 30 days
+    if(c.renewalDate&&daysUntil(c.renewalDate)<=30&&daysUntil(c.renewalDate)>0)
+      alerts.push({type:'renewal',priority:'high',contact:c,msg:`Policy renewal in ${daysUntil(c.renewalDate)} days (${fmtDate(c.renewalDate)})`,icon:'🔄'});
+    // Premium due in 7 days
+    if(c.premiumDue&&daysUntil(c.premiumDue)<=7&&daysUntil(c.premiumDue)>0)
+      alerts.push({type:'premium',priority:'high',contact:c,msg:`Premium due in ${daysUntil(c.premiumDue)} days`,icon:'💰'});
+    // Birthday in 7 days
+    const bdays=daysUntilBirthday(c.birthday);
+    if(bdays!==null&&bdays<=7)
+      alerts.push({type:'birthday',priority:'medium',contact:c,msg:`Birthday in ${bdays} days (${fmtDate(c.birthday)})`,icon:'🎂'});
+    // Anniversary in 7 days
+    const adays=daysUntilBirthday(c.anniversary);
+    if(adays!==null&&adays<=7)
+      alerts.push({type:'anniversary',priority:'medium',contact:c,msg:`Anniversary in ${adays} days`,icon:'💍'});
+  });
+  return alerts.sort((a,b)=>a.priority==='high'?-1:1);
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function setView(v){state.view=v;render();}
+function buildNav(){
+  const alerts=getAlerts();
+  const navs=[['dashboard','🏠 Dashboard'],['pipeline','📊 Pipeline'],['products','📦 Products'],['renewals',`🔔 Alerts${alerts.length?`<span class="badge">${alerts.length}</span>`:''}` ],['contacts','👥 Clients'],['ai','✦ AI Chat']];
+  document.getElementById('desktopNav').innerHTML=navs.map(([v,l])=>
     `<button class="nav-btn" onclick="setView('${v}')" style="background:${state.view===v?'#1e1e1e':'transparent'};color:${state.view===v?'#e8e8e8':'#666'}">${l}</button>`
   ).join('');
-  navs.forEach(([v]) => {
-    const el = document.getElementById('mnav-'+v);
-    if(el) el.style.color = state.view===v?'#e8e8e8':'#555';
+  navs.forEach(([v])=>{
+    const el=document.getElementById('mnav-'+v);
+    if(el)el.style.color=state.view===v?'#e8e8e8':'#555';
   });
 }
 
-// ── Render ───────────────────────────────────────────────────────────────────
-function render() {
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(){
   buildNav();
-  const main = document.getElementById('main');
-  if(state.view==='dashboard') main.innerHTML = renderDashboard();
-  else if(state.view==='pipeline') main.innerHTML = renderPipeline();
-  else if(state.view==='contacts') main.innerHTML = renderContacts();
-  else if(state.view==='ai') { main.innerHTML = renderAI(); scrollChatBottom(); }
+  const main=document.getElementById('main');
+  if(state.view==='dashboard')main.innerHTML=renderDashboard();
+  else if(state.view==='pipeline')main.innerHTML=renderPipeline();
+  else if(state.view==='products')main.innerHTML=renderProducts();
+  else if(state.view==='renewals')main.innerHTML=renderAlerts();
+  else if(state.view==='contacts')main.innerHTML=renderContact();
+  else if(state.view==='ai'){main.innerHTML=renderAI();scrollChatBottom();}
 }
 
-// ── Dashboard ────────────────────────────────────────────────────────────────
-function renderDashboard() {
-  const cs = state.contacts;
-  const pipeline = cs.filter(c=>c.stage!=='Churned'&&c.stage!=='Closed Won');
-  const totalPipeline = pipeline.reduce((s,c)=>s+c.value,0);
-  const overdue = cs.filter(c=>daysUntil(c.nextFollowUp)<=0&&c.stage!=='Churned'&&c.stage!=='Closed Won');
-  const closed = cs.filter(c=>c.stage==='Closed Won').reduce((s,c)=>s+c.value,0);
-  const upcoming = cs.filter(c=>daysUntil(c.nextFollowUp)>0&&daysUntil(c.nextFollowUp)<=7&&c.stage!=='Churned');
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const cs=state.contacts;
+  const active=cs.filter(c=>c.stage!=='Churned'&&c.stage!=='Closed Won');
+  const totalAUM=cs.reduce((s,c)=>s+(c.aum||0),0);
+  const totalComm=cs.reduce((s,c)=>s+(c.commission||0),0);
+  const totalPipeline=active.reduce((s,c)=>s+(c.value||0),0);
+  const alerts=getAlerts();
+  const overdue=cs.filter(c=>daysUntil(c.nextFollowUp)<=0&&c.stage!=='Churned'&&c.stage!=='Closed Won');
+  const upcomingBdays=cs.filter(c=>{const d=daysUntilBirthday(c.birthday);return d!==null&&d<=7;});
 
   return `
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-    <div><div style="font-size:22px;font-weight:700">Good morning 👋</div><div style="font-size:13px;color:#555;margin-top:2px">Here's what needs your attention today</div></div>
-    <div style="display:flex;gap:8px">
+    <div><div style="font-size:22px;font-weight:700">Good morning 👋</div><div style="font-size:13px;color:#555;margin-top:2px">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn-secondary" onclick="openChangeRequest()" style="font-size:12px">✦ Request Change</button>
-      <button class="btn-primary hide-mobile" onclick="openAddContact()">+ Add Contact</button>
+      <button class="btn-secondary" onclick="openImportCSV()" style="font-size:12px">📱 Import Contacts</button>
+      <button class="btn-primary hide-mobile" onclick="openAddContact()">+ Add Client</button>
     </div>
   </div>
+
+  <!-- Stats -->
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px">
     ${[
-      ['Pipeline',fmt(totalPipeline),`${pipeline.length} active`,'#e8e8e8'],
-      ['Overdue',overdue.length,'need attention',overdue.length>0?'#e07070':'#e8e8e8'],
-      ['This Week',upcoming.length,'upcoming','#e8e8e8'],
-      ['Closed Won',fmt(closed),'total','#5ba85b'],
-    ].map(([l,v,s,col])=>`<div class="card" style="margin-bottom:0"><span class="label">${l}</span><div style="font-size:24px;font-weight:700;color:${col};line-height:1">${v}</div><div style="font-size:12px;color:#555;margin-top:4px">${s}</div></div>`).join('')}
+      ['Total AUM',fmt(totalAUM),'assets managed','#7ec8c8'],
+      ['Commission',fmt(totalComm),'earned','#5ba85b'],
+      ['Pipeline',fmt(totalPipeline),`${active.length} active`,'#e8e8e8'],
+      ['Alerts',alerts.length,'need attention',alerts.length>0?'#e07070':'#e8e8e8'],
+      ['Total Clients',cs.length,'in CRM','#e8e8e8'],
+    ].map(([l,v,s,col])=>`<div class="card" style="margin-bottom:0"><span class="label">${l}</span><div style="font-size:22px;font-weight:700;color:${col};line-height:1.1">${v}</div><div style="font-size:11px;color:#555;margin-top:4px">${s}</div></div>`).join('')}
   </div>
-  ${overdue.length>0?`<div class="card" style="border-color:#3a1a1a;background:#130d0d">
-    <span class="label" style="color:#e07070">⚠ Overdue Follow-ups</span>
-    ${overdue.map(c=>`<div class="row" onclick="openContact(${c.id})">${avatar(c,34)}<div style="flex:1"><div style="font-weight:600;font-size:14px">${c.name}</div><div style="font-size:12px;color:#555">${c.company}</div></div><span style="font-size:12px;color:#e07070">${Math.abs(daysUntil(c.nextFollowUp))}d overdue</span>${stagePill(c.stage)}</div>`).join('')}
+
+  <!-- Alerts -->
+  ${alerts.length>0?`<div class="card" style="border-color:#3a2a00;background:#120e00;margin-bottom:20px">
+    <span class="label" style="color:#f4c97a;margin-bottom:12px">🔔 Action Required (${alerts.length})</span>
+    ${alerts.slice(0,5).map(a=>`<div class="row" onclick="openContact(${a.contact.id})" style="border-color:#2a1e00">
+      <span style="font-size:20px">${a.icon}</span>
+      ${avatar(a.contact,32)}
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${a.contact.name}</div><div style="font-size:12px;color:${a.priority==='high'?'#e07070':'#f4c97a'}">${a.msg}</div></div>
+      ${stagePill(a.contact.stage)}
+    </div>`).join('')}
+    ${alerts.length>5?`<div style="text-align:center;margin-top:8px"><button class="btn-secondary" onclick="setView('renewals')" style="font-size:12px">View all ${alerts.length} alerts →</button></div>`:''}
   </div>`:''}
+
+  <!-- Upcoming birthdays -->
+  ${upcomingBdays.length>0?`<div class="card" style="border-color:#2a1a3a;background:#0e0a12;margin-bottom:20px">
+    <span class="label" style="color:#c4a8d4;margin-bottom:12px">🎂 Upcoming Birthdays</span>
+    ${upcomingBdays.map(c=>`<div class="row" onclick="openContact(${c.id})">
+      ${avatar(c,32)}<div style="flex:1"><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:12px;color:#c4a8d4">${daysUntilBirthday(c.birthday)===0?'Today! 🎉':`In ${daysUntilBirthday(c.birthday)} days`}</div></div>
+      <button onclick="event.stopPropagation();openWhatsApp('${c.whatsapp||c.phone}','Happy Birthday ${c.name.split(' ')[0]}! Wishing you a wonderful year ahead. 🎂')" style="background:#25D366;border:none;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer">💬 Wish</button>
+    </div>`).join('')}
+  </div>`:''}
+
+  <!-- All clients -->
   <div class="card">
-    <span class="label" style="margin-bottom:14px">All Clients</span>
-    ${cs.length===0?'<div style="color:#444;text-align:center;padding:24px">No contacts yet. Add your first client!</div>':''}
-    ${cs.map(c=>`<div class="row" onclick="openContact(${c.id})">${avatar(c,34)}<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${c.name}</div><div style="font-size:12px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.company} · ${c.role}</div></div><span style="font-size:13px;font-weight:600;color:#aaa">${fmt(c.value)}</span>${stagePill(c.stage)}<span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#444'};min-width:44px;text-align:right">${daysUntil(c.nextFollowUp)<=0?'Overdue':daysUntil(c.nextFollowUp)+'d'}</span></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span class="label" style="margin-bottom:0">All Clients</span>
+      <input oninput="filterClients(this.value)" placeholder="🔍 Search…" style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:6px;padding:6px 10px;color:#e8e8e8;font-size:12px;outline:none;width:160px"/>
+    </div>
+    <div id="client-list">
+    ${cs.map(c=>clientRow(c)).join('')}
+    </div>
+    ${cs.length===0?'<div style="color:#444;text-align:center;padding:24px">No clients yet. Add your first client!</div>':''}
   </div>`;
 }
 
-// ── Pipeline ─────────────────────────────────────────────────────────────────
-function renderPipeline() {
+function clientRow(c){
+  const prodCount=c.products?.length||0;
+  return `<div class="row" onclick="openContact(${c.id})" id="crow-${c.id}">
+    ${avatar(c,36)}
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600;font-size:14px">${c.name}</div>
+      <div style="font-size:12px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.company||c.role} · ${c.segment||''}</div>
+    </div>
+    <div style="text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end">
+      <span style="font-size:12px;font-weight:600;color:#7ec8c8">${fmt(c.aum||0)}</span>
+      <span style="font-size:10px;color:#555">${prodCount} product${prodCount!==1?'s':''}</span>
+    </div>
+    ${stagePill(c.stage)}
+    <span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#444'};min-width:44px;text-align:right">${daysUntil(c.nextFollowUp)<=0?'Overdue':daysUntil(c.nextFollowUp)+'d'}</span>
+  </div>`;
+}
+
+function filterClients(q){
+  const list=document.getElementById('client-list');
+  if(!list)return;
+  const filtered=state.contacts.filter(c=>
+    c.name.toLowerCase().includes(q.toLowerCase())||
+    (c.company||'').toLowerCase().includes(q.toLowerCase())||
+    (c.phone||'').includes(q)
+  );
+  list.innerHTML=filtered.map(c=>clientRow(c)).join('');
+}
+
+// ── Pipeline ──────────────────────────────────────────────────────────────────
+function renderPipeline(){
   return `<div style="font-size:22px;font-weight:700;margin-bottom:20px">Pipeline</div>
   <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:16px">
     ${STAGES.map(stage=>{
-      const sc = state.contacts.filter(c=>c.stage===stage);
-      const total = sc.reduce((s,c)=>s+c.value,0);
-      return `<div style="min-width:190px;flex:1;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:14px">
+      const sc=state.contacts.filter(c=>c.stage===stage);
+      const total=sc.reduce((s,c)=>s+(c.value||0),0);
+      return `<div style="min-width:200px;flex:1;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:6px"><div style="width:7px;height:7px;border-radius:50%;background:${STAGE_COLORS[stage]}"></div><span style="font-size:12px;font-weight:700;color:#aaa">${stage}</span></div>
           <span style="font-size:11px;color:#555">${fmt(total)}</span>
         </div>
         ${sc.length===0?'<div style="font-size:12px;color:#2a2a2a;text-align:center;padding:16px 0">Empty</div>':''}
         ${sc.map(c=>`<div onclick="openContact(${c.id})" style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer">
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">${avatar(c,28)}<div><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#555">${c.company}</div></div></div>
-          ${healthBar(c.health)}
-          <div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:12px;font-weight:700">${fmt(c.value)}</span><span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#555'}">${daysUntil(c.nextFollowUp)<=0?'Overdue':fmtDate(c.nextFollowUp)}</span></div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">${avatar(c,28)}<div><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#555">${c.company||c.role}</div></div></div>
+          ${healthBar(c.health||50)}
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px">${(c.products||[]).slice(0,3).map(pid=>{const p=getProduct(pid);return p?`<span style="font-size:9px;padding:2px 5px;border-radius:3px;background:${p.color}22;color:${p.color}">${p.icon} ${p.name}</span>`:''}).join('')}</div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px">
+            <span style="font-size:11px;font-weight:600;color:#7ec8c8">${fmt(c.aum||0)} AUM</span>
+            <span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#555'}">${daysUntil(c.nextFollowUp)<=0?'Overdue':fmtDate(c.nextFollowUp)}</span>
+          </div>
         </div>`).join('')}
       </div>`;
     }).join('')}
   </div>`;
 }
 
-// ── Contacts ─────────────────────────────────────────────────────────────────
-function renderContacts() {
-  const c = getContact(state.selectedId);
-  if(!c) return `<div style="color:#555;text-align:center;padding:60px"><div style="font-size:40px;margin-bottom:12px">👥</div>Select a contact from the Dashboard</div>`;
+// ── Products View ─────────────────────────────────────────────────────────────
+function renderProducts(){
+  const cats=['Insurance','Investment','Loan'];
+  return `<div style="font-size:22px;font-weight:700;margin-bottom:20px">Products Overview</div>
+  ${cats.map(cat=>{
+    const catProds=PRODUCTS.filter(p=>p.category===cat);
+    return `<div class="card">
+      <span class="label" style="margin-bottom:14px">${cat}</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        ${catProds.map(prod=>{
+          const holders=state.contacts.filter(c=>(c.products||[]).includes(prod.id));
+          const prospects=state.contacts.filter(c=>(c.prospectProducts||[]).includes(prod.id));
+          const totalAUM=holders.reduce((s,c)=>s+(c.aum||0),0);
+          return `<div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:14px;cursor:pointer" onclick="showProductClients('${prod.id}')">
+            <div style="font-size:20px;margin-bottom:6px">${prod.icon}</div>
+            <div style="font-weight:700;font-size:14px;color:${prod.color};margin-bottom:8px">${prod.name}</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px">
+              <div><div style="color:#555;font-size:10px">CLIENTS</div><div style="font-weight:700;color:#e8e8e8">${holders.length}</div></div>
+              <div><div style="color:#555;font-size:10px">PROSPECTS</div><div style="font-weight:700;color:#f4c97a">${prospects.length}</div></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('')}`;
+}
+
+function showProductClients(prodId){
+  const prod=getProduct(prodId);
+  if(!prod)return;
+  const holders=state.contacts.filter(c=>(c.products||[]).includes(prodId));
+  const prospects=state.contacts.filter(c=>(c.prospectProducts||[]).includes(prodId));
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:20px;margin-bottom:4px">${prod.icon} ${prod.name}</div>
+      <div style="font-size:13px;color:#555;margin-bottom:20px">${prod.category}</div>
+      ${holders.length>0?`<div style="margin-bottom:16px"><span class="label">Current Clients (${holders.length})</span>${holders.map(c=>`<div class="row" onclick="closeModal();openContact(${c.id})">${avatar(c,32)}<div style="flex:1"><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#555">${c.company||c.role}</div></div><span style="font-size:12px;color:#7ec8c8">${fmt(c.aum||0)}</span></div>`).join('')}</div>`:''}
+      ${prospects.length>0?`<div><span class="label" style="color:#f4c97a">Prospects (${prospects.length})</span>${prospects.map(c=>`<div class="row" onclick="closeModal();openContact(${c.id})">${avatar(c,32)}<div style="flex:1"><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#555">${c.company||c.role}</div></div>${stagePill(c.stage)}</div>`).join('')}</div>`:''}
+      ${holders.length===0&&prospects.length===0?'<div style="color:#444;text-align:center;padding:20px">No clients for this product yet.</div>':''}
+      <div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="btn-secondary" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+
+// ── Alerts View ───────────────────────────────────────────────────────────────
+function renderAlerts(){
+  const alerts=getAlerts();
+  const types={followup:'📞 Follow-ups',renewal:'🔄 Renewals',premium:'💰 Premiums Due',birthday:'🎂 Birthdays',anniversary:'💍 Anniversaries'};
+  const grouped={};
+  alerts.forEach(a=>{if(!grouped[a.type])grouped[a.type]=[];grouped[a.type].push(a);});
+  return `<div style="font-size:22px;font-weight:700;margin-bottom:20px">Alerts & Reminders <span style="font-size:14px;color:#555;font-weight:400">(${alerts.length} total)</span></div>
+  ${alerts.length===0?'<div class="card" style="text-align:center;color:#555;padding:40px">🎉 No alerts! You\'re all caught up.</div>':''}
+  ${Object.entries(grouped).map(([type,items])=>`
+    <div class="card" style="border-color:${type==='followup'||type==='renewal'?'#3a1a1a':'#1e1e1e'}">
+      <span class="label" style="margin-bottom:12px;color:${type==='followup'||type==='renewal'?'#e07070':'#aaa'}">${types[type]||type} (${items.length})</span>
+      ${items.map(a=>`<div class="row" onclick="openContact(${a.contact.id})" style="border-color:#1e1e1e">
+        ${avatar(a.contact,34)}
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${a.contact.name}</div><div style="font-size:12px;color:#888">${a.msg}</div></div>
+        <div style="display:flex;gap:6px">
+          ${a.contact.whatsapp||a.contact.phone?`<button onclick="event.stopPropagation();openWhatsApp('${a.contact.whatsapp||a.contact.phone}','')" style="background:#25D366;border:none;color:#fff;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer">💬</button>`:''}
+          ${stagePill(a.contact.stage)}
+        </div>
+      </div>`).join('')}
+    </div>
+  `).join('')}`;
+}
+
+// ── Contact Detail ────────────────────────────────────────────────────────────
+function renderContact(){
+  const c=getC(state.selectedId);
+  if(!c)return`<div style="color:#555;text-align:center;padding:60px"><div style="font-size:40px;margin-bottom:12px">👥</div>Select a client from the Dashboard</div>`;
+  const tabs=['overview','products','family','financials','notes','ai'];
+  const tabLabels={overview:'Overview',products:'Products',family:'Family & Personal',financials:'Financials',notes:'Notes',ai:'AI Assistant'};
   return `
   <button class="btn-secondary" onclick="setView('dashboard')" style="margin-bottom:16px;font-size:12px">← Back</button>
-  <div style="display:flex;gap:20px;flex-wrap:wrap">
-    <div style="flex:1;min-width:280px">
-      <div class="card">
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          ${avatar(c,52)}
-          <div style="flex:1">
-            <div style="font-size:20px;font-weight:700">${c.name}</div>
-            <div style="font-size:13px;color:#666;margin-bottom:8px">${c.role} · ${c.company}</div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${c.tags.map(t=>`<span style="padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;background:#1e1e1e;color:#888;border:1px solid #2e2e2e;text-transform:uppercase">${t}</span>`).join('')}</div>
-            ${healthBar(c.health)}
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <select onchange="updateStage(${c.id},this.value)" style="background:#0d0d0d;border:1px solid #2e2e2e;border-radius:6px;padding:7px 10px;color:#e8e8e8;font-size:12px;outline:none">
-              ${STAGES.map(s=>`<option value="${s}" ${s===c.stage?'selected':''}>${s}</option>`).join('')}
-            </select>
-            <button class="btn-secondary" onclick="deleteContact(${c.id})" style="font-size:11px;color:#e07070;border-color:#3a1a1a">Delete</button>
-          </div>
+  <!-- Header Card -->
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+      ${avatar(c,52)}
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:20px;font-weight:700">${c.name}</div>
+        <div style="font-size:13px;color:#666;margin-bottom:6px">${c.role}${c.company?' · '+c.company:''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          ${stagePill(c.stage)}
+          ${c.segment?`<span class="pill" style="background:#1e1e1e;color:#888">${c.segment}</span>`:''}
+          ${c.riskProfile?`<span class="pill" style="background:#1e1e2e;color:#87b4e8">${c.riskProfile}</span>`:''}
+          ${c.kycStatus==='Complete'?`<span class="pill" style="background:#0d1a0d;color:#5ba85b">✓ KYC</span>`:`<span class="pill" style="background:#1a0d0d;color:#e07070">⚠ KYC Pending</span>`}
         </div>
+        ${healthBar(c.health||50)}
       </div>
-      <div class="card" style="display:flex;gap:20px;flex-wrap:wrap">
-        ${[['Email',c.email],['Phone',c.phone||'—'],['Deal Value',fmt(c.value)],['Last Contact',fmtDate(c.lastContact)+' ('+daysAgo(c.lastContact)+'d ago)'],['Follow-up',fmtDate(c.nextFollowUp)]].map(([l,v])=>`<div><span class="label">${l}</span><div style="font-size:13px;color:#bbb">${v}</div></div>`).join('')}
-      </div>
-      <div class="card">
-        <span class="label">Notes & Activity</span>
-        <div style="display:flex;gap:8px;margin-bottom:16px">
-          <input id="noteInput" class="input" placeholder="Log a call, meeting, or update…" onkeydown="if(event.key==='Enter')addNote(${c.id})"/>
-          <button class="btn-primary" onclick="addNote(${c.id})">Add</button>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <select onchange="updateField(${c.id},'stage',this.value)" style="background:#0d0d0d;border:1px solid #2e2e2e;border-radius:6px;padding:7px 10px;color:#e8e8e8;font-size:12px;outline:none">
+          ${STAGES.map(s=>`<option value="${s}" ${s===c.stage?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <div style="display:flex;gap:6px">
+          ${c.phone?`<a href="tel:${c.phone}" style="background:#1e1e1e;border-radius:6px;padding:6px 10px;font-size:14px;text-decoration:none">📞</a>`:''}
+          ${c.whatsapp||c.phone?`<button onclick="openWhatsApp('${c.whatsapp||c.phone}','')" style="background:#25D366;border:none;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer">💬</button>`:''}
+          ${c.email?`<a href="mailto:${c.email}" style="background:#1e1e1e;border-radius:6px;padding:6px 10px;font-size:14px;text-decoration:none">✉️</a>`:''}
         </div>
-        ${c.notes.length===0?'<div style="color:#444;font-size:13px">No notes yet.</div>':''}
-        ${c.notes.map(n=>`<div style="border-left:2px solid #2e2e2e;padding-left:14px;margin-bottom:14px"><div style="font-size:11px;color:#555;margin-bottom:3px">${fmtDate(n.date)}</div><div style="font-size:13px;color:#ccc;line-height:1.65">${n.text}</div></div>`).join('')}
+        <button class="btn-danger" onclick="deleteContact(${c.id})" style="font-size:11px;padding:5px 10px">Delete</button>
       </div>
     </div>
-    <div style="width:300px;flex-shrink:0">
-      <div class="card">
-        <span class="label" style="margin-bottom:12px">AI Assistant</span>
-        ${!state.settings.apiKey?`<div style="background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;color:#f4c97a">Add your API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:12px;padding:0">Settings</button> to enable AI.</div>`:''}
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
-          <button onclick="setAiMode('insights')" id="ai-btn-insights" class="btn-secondary" style="font-size:12px;padding:7px 12px">💡 Insights</button>
-          <button onclick="setAiMode('email')" id="ai-btn-email" class="btn-secondary" style="font-size:12px;padding:7px 12px">✉ Email</button>
-          <button onclick="setAiMode('engage')" id="ai-btn-engage" class="btn-secondary" style="font-size:12px;padding:7px 12px">🤝 Engage</button>
-        </div>
-        <button class="btn-primary" id="ai-run-btn" onclick="runAI(${c.id})" style="width:100%;margin-bottom:14px">Generate Insights</button>
-        <div id="ai-output" style="font-size:13px;color:#ccc;line-height:1.7;white-space:pre-wrap;max-height:380px;overflow-y:auto"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:6px">
+    ${tabs.map(t=>`<button class="tab ${state.contactTab===t?'active':''}" onclick="setContactTab('${t}')">${tabLabels[t]}</button>`).join('')}
+  </div>
+
+  <!-- Tab Content -->
+  <div id="tab-content">${renderContactTab(c)}</div>`;
+}
+
+function setContactTab(tab){
+  state.contactTab=tab;
+  const c=getC(state.selectedId);
+  if(!c)return;
+  const el=document.getElementById('tab-content');
+  if(el)el.innerHTML=renderContactTab(c);
+  document.querySelectorAll('.tab').forEach(b=>{
+    b.classList.toggle('active',b.textContent.toLowerCase()===tab||b.onclick?.toString().includes(`'${tab}'`));
+  });
+  // re-render tabs properly
+  render();
+}
+
+function renderContactTab(c){
+  if(state.contactTab==='overview')return renderOverviewTab(c);
+  if(state.contactTab==='products')return renderProductsTab(c);
+  if(state.contactTab==='family')return renderFamilyTab(c);
+  if(state.contactTab==='financials')return renderFinancialsTab(c);
+  if(state.contactTab==='notes')return renderNotesTab(c);
+  if(state.contactTab==='ai')return renderContactAITab(c);
+  return '';
+}
+
+function renderOverviewTab(c){
+  return `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
+    <div class="card" style="margin-bottom:0">
+      <span class="label">Contact Info</span>
+      ${[['📧 Email',c.email],['📞 Phone',c.phone],['💬 WhatsApp',c.whatsapp],['🏢 Company',c.company],['💼 Role',c.role]].map(([l,v])=>v?`<div style="margin-bottom:10px"><div style="font-size:11px;color:#555">${l}</div><div style="font-size:13px;color:#bbb">${v}</div></div>`:'').join('')}
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <span class="label">Follow-up</span>
+      <div style="margin-bottom:10px"><div style="font-size:11px;color:#555">Last Contact</div><div style="font-size:13px;color:#bbb">${fmtDateFull(c.lastContact)} (${daysAgo(c.lastContact)}d ago)</div></div>
+      <div style="margin-bottom:10px"><div style="font-size:11px;color:#555">Next Follow-up</div><div style="font-size:13px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#bbb'}">${fmtDateFull(c.nextFollowUp)}</div></div>
+      <div style="margin-bottom:10px"><div style="font-size:11px;color:#555">Renewal Date</div><div style="font-size:13px;color:${c.renewalDate&&daysUntil(c.renewalDate)<=30?'#f4c97a':'#bbb'}">${fmtDateFull(c.renewalDate)}</div></div>
+      <div><div style="font-size:11px;color:#555">Premium Due</div><div style="font-size:13px;color:${c.premiumDue&&daysUntil(c.premiumDue)<=7?'#e07070':'#bbb'}">${fmtDateFull(c.premiumDue)}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <span class="label">Goals</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${(c.goals||[]).map(g=>`<span style="padding:4px 10px;border-radius:6px;background:#1e1e1e;color:#aaa;font-size:12px">${g}</span>`).join('')||'<span style="color:#444;font-size:13px">No goals added</span>'}</div>
+  </div>
+  ${c.referredBy||c.referrals?.length?`<div class="card"><span class="label">Referrals</span>${c.referredBy?`<div style="margin-bottom:8px;font-size:13px;color:#aaa">Referred by: <span style="color:#7ec8c8">${c.referredBy}</span></div>`:''}${c.referrals?.length?`<div style="font-size:13px;color:#aaa">Has referred: <span style="color:#5ba85b">${c.referrals.join(', ')}</span></div>`:''}</div>`:''}`;
+}
+
+function renderProductsTab(c){
+  return `
+  <div class="card">
+    <span class="label">Current Products (${(c.products||[]).length})</span>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${(c.products||[]).map(pid=>productTag(pid)).join('')||'<span style="color:#444;font-size:13px">No products</span>'}</div>
+    <span class="label" style="color:#f4c97a">Prospect Products (${(c.prospectProducts||[]).length})</span>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">${(c.prospectProducts||[]).map(pid=>`<span class="prod-tag" style="background:#2a2000;color:#f4c97a;border:1px solid #3a2a00">${getProduct(pid)?.icon} ${getProduct(pid)?.name}</span>`).join('')||'<span style="color:#444;font-size:13px">None identified</span>'}</div>
+    <button class="btn-primary" onclick="openEditProducts(${c.id})" style="font-size:12px">✏ Edit Products</button>
+  </div>
+  <div class="card">
+    <span class="label">Renewal & Policy Info</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
+      ${[['Policy Renewal',fmtDateFull(c.renewalDate)],['Premium Due',fmtDateFull(c.premiumDue)],['SIP Date',c.sipDate?`${c.sipDate}th of every month`:'—'],['Policy Numbers',c.policyNumbers||'—']].map(([l,v])=>`<div><span class="label">${l}</span><div style="font-size:13px;color:#bbb">${v}</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderFamilyTab(c){
+  return `
+  <div class="card">
+    <span class="label">Personal Details</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="two-col">
+      ${[
+        ['🎂 Birthday',fmtDateFull(c.birthday)+(c.birthday?` (in ${daysUntilBirthday(c.birthday)} days)`:'')],
+        ['💍 Anniversary',fmtDateFull(c.anniversary)+(c.anniversary?` (in ${daysUntilBirthday(c.anniversary)} days)`:'')],
+        ['👨‍👩‍👧‍👦 Family Members',c.familyMembers||'—'],
+        ['👶 Children',c.children||'0'],
+        ['💑 Spouse',c.spouseName||'—'],
+        ['🎓 Age',c.age||'—'],
+      ].map(([l,v])=>`<div><span class="label">${l}</span><div style="font-size:13px;color:#bbb">${v}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <span class="label">Important Dates</span>
+    ${c.birthday?`<div class="row" style="cursor:default">
+      <span style="font-size:20px">🎂</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${c.name.split(' ')[0]}'s Birthday</div><div style="font-size:12px;color:#555">${fmtDateFull(c.birthday)}</div></div>
+      <button onclick="openWhatsApp('${c.whatsapp||c.phone}','Happy Birthday ${c.name.split(' ')[0]}! 🎂 Wishing you a wonderful year ahead filled with joy and prosperity!')" style="background:#25D366;border:none;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer">💬 Send Wish</button>
+    </div>`:''}
+    ${c.anniversary?`<div class="row" style="cursor:default">
+      <span style="font-size:20px">💍</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">Wedding Anniversary</div><div style="font-size:12px;color:#555">${fmtDateFull(c.anniversary)}</div></div>
+      <button onclick="openWhatsApp('${c.whatsapp||c.phone}','Happy Anniversary ${c.name.split(' ')[0]} & ${c.spouseName||'family'}! 💍 Wishing you many more years of happiness together!')" style="background:#25D366;border:none;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer">💬 Send Wish</button>
+    </div>`:''}
+    <button class="btn-primary" onclick="openEditFamily(${c.id})" style="font-size:12px;margin-top:12px">✏ Edit Family Details</button>
+  </div>`;
+}
+
+function renderFinancialsTab(c){
+  return `
+  <div class="card">
+    <span class="label">Financial Profile</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px">
+      ${[
+        ['Total AUM',fmt(c.aum||0),'#7ec8c8'],
+        ['Commission Earned',fmt(c.commission||0),'#5ba85b'],
+        ['Deal Value',fmt(c.value||0),'#e8e8e8'],
+        ['Income Bracket',c.incomeBracket||'—','#f4c97a'],
+        ['Risk Profile',c.riskProfile||'—','#87b4e8'],
+        ['Segment',c.segment||'—','#c4a8d4'],
+      ].map(([l,v,col])=>`<div><span class="label">${l}</span><div style="font-size:16px;font-weight:700;color:${col}">${v}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <span class="label">KYC & Documents</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="two-col">
+      ${[['KYC Status',c.kycStatus||'Pending'],['PAN Number',c.panNumber||'—'],['KYC Expiry',fmtDateFull(c.kycExpiry)],['Nominee',c.nominee||'—']].map(([l,v])=>`<div><span class="label">${l}</span><div style="font-size:13px;color:#bbb">${v}</div></div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="openEditFinancials(${c.id})" style="font-size:12px;margin-top:16px">✏ Edit Financial Details</button>
+  </div>`;
+}
+
+function renderNotesTab(c){
+  return `
+  <div class="card">
+    <span class="label">Notes & Activity</span>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input id="noteInput" class="input" placeholder="Log a call, meeting, email, or update…" onkeydown="if(event.key==='Enter')addNote(${c.id})"/>
+      <button class="btn-primary" onclick="addNote(${c.id})">Add</button>
+    </div>
+    ${c.notes?.length===0?'<div style="color:#444;font-size:13px">No notes yet. Log your first interaction!</div>':''}
+    ${(c.notes||[]).map(n=>`<div style="border-left:2px solid #2e2e2e;padding-left:14px;margin-bottom:14px">
+      <div style="font-size:11px;color:#555;margin-bottom:3px">${fmtDateFull(n.date)}</div>
+      <div style="font-size:13px;color:#ccc;line-height:1.65">${n.text}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderContactAITab(c){
+  return `
+  <div class="card">
+    <span class="label" style="margin-bottom:12px">AI Assistant</span>
+    ${!state.settings.apiKey?`<div class="alert-card"><div style="font-size:12px;color:#f4c97a">Add your API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:12px;padding:0">Settings</button> to enable AI.</div></div>`:''}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <button onclick="setAiMode('insights')" id="ai-btn-insights" class="btn-secondary" style="font-size:12px">💡 Insights</button>
+      <button onclick="setAiMode('email')" id="ai-btn-email" class="btn-secondary" style="font-size:12px">✉ Draft Email</button>
+      <button onclick="setAiMode('engage')" id="ai-btn-engage" class="btn-secondary" style="font-size:12px">🤝 Engagement</button>
+      <button onclick="setAiMode('products')" id="ai-btn-products" class="btn-secondary" style="font-size:12px">📦 Cross-sell</button>
+      <button onclick="setAiMode('whatsapp')" id="ai-btn-whatsapp" class="btn-secondary" style="font-size:12px">💬 WhatsApp</button>
+    </div>
+    <button class="btn-primary" id="ai-run-btn" onclick="runAI(${c.id})" style="width:100%;margin-bottom:14px">Generate Insights</button>
+    <div id="ai-output"></div>
+  </div>`;
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+function openContact(id){state.selectedId=id;state.contactTab='overview';state.view='contacts';render();}
+function updateField(id,field,val){
+  state.contacts=state.contacts.map(c=>c.id===id?{...c,[field]:val}:c);
+  save();
+}
+function deleteContact(id){
+  if(!confirm('Delete this client? This cannot be undone.'))return;
+  state.contacts=state.contacts.filter(c=>c.id!==id);
+  state.selectedId=null;save();setView('dashboard');
+}
+function addNote(id){
+  const input=document.getElementById('noteInput');
+  if(!input||!input.value.trim())return;
+  const note={id:Date.now(),date:new Date().toISOString().split('T')[0],text:input.value.trim()};
+  state.contacts=state.contacts.map(c=>c.id===id?{...c,notes:[note,...(c.notes||[])],lastContact:note.date}:c);
+  save();openContact(id);state.contactTab='notes';render();
+}
+function openWhatsApp(phone,msg){
+  const clean=phone.replace(/\D/g,'');
+  const url=`https://wa.me/${clean}${msg?'?text='+encodeURIComponent(msg):''}`;
+  window.open(url,'_blank');
+}
+
+// ── Edit Modals ───────────────────────────────────────────────────────────────
+function openEditProducts(id){
+  const c=getC(id);if(!c)return;
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="max-width:600px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">Edit Products — ${c.name}</div>
+      <span class="label">Current Products</span>
+      <div class="checkbox-grid" id="prod-grid">
+        ${PRODUCTS.map(p=>`<div class="checkbox-item ${(c.products||[]).includes(p.id)?'selected':''}" onclick="toggleProduct(${id},'products','${p.id}',this)">${p.icon} ${p.name}</div>`).join('')}
+      </div>
+      <div style="margin-top:16px"><span class="label" style="color:#f4c97a">Prospect Products</span>
+      <div class="checkbox-grid" id="prospect-grid">
+        ${PRODUCTS.map(p=>`<div class="checkbox-item ${(c.prospectProducts||[]).includes(p.id)?'selected':''}" onclick="toggleProduct(${id},'prospectProducts','${p.id}',this)" style="${(c.prospectProducts||[]).includes(p.id)?'border-color:#f4c97a;color:#f4c97a;background:#f4c97a22':''}">${p.icon} ${p.name}</div>`).join('')}
+      </div></div>
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px"><label class="label">Renewal Date</label><input type="date" id="ep-renewal" class="input" value="${c.renewalDate||''}"/></div>
+        <div style="flex:1;min-width:120px"><label class="label">Premium Due</label><input type="date" id="ep-premium" class="input" value="${c.premiumDue||''}"/></div>
+        <div style="flex:1;min-width:120px"><label class="label">SIP Date (day)</label><input type="number" id="ep-sip" class="input" min="1" max="31" value="${c.sipDate||''}" placeholder="e.g. 5"/></div>
+      </div>
+      <div style="margin-top:16px"><label class="label">Policy Numbers</label><input id="ep-policy" class="input" value="${c.policyNumbers||''}" placeholder="e.g. LIC-123456, HDFC-789"/></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveProducts(${id})">Save</button>
       </div>
     </div>
   </div>`;
 }
 
-// ── AI Chat ──────────────────────────────────────────────────────────────────
-function renderAI() {
-  const msgs = state.chatHistory;
+function toggleProduct(id,field,prodId,el){
+  const c=getC(id);if(!c)return;
+  const arr=[...(c[field]||[])];
+  const idx=arr.indexOf(prodId);
+  if(idx>=0)arr.splice(idx,1);else arr.push(prodId);
+  state.contacts=state.contacts.map(x=>x.id===id?{...x,[field]:arr}:x);
+  save();
+  const isSelected=arr.includes(prodId);
+  el.classList.toggle('selected',isSelected);
+  if(field==='prospectProducts'){el.style.borderColor=isSelected?'#f4c97a':'';el.style.color=isSelected?'#f4c97a':'';el.style.background=isSelected?'#f4c97a22':'';}
+}
+
+function saveProducts(id){
+  const updates={
+    renewalDate:document.getElementById('ep-renewal')?.value||'',
+    premiumDue:document.getElementById('ep-premium')?.value||'',
+    sipDate:parseInt(document.getElementById('ep-sip')?.value)||0,
+    policyNumbers:document.getElementById('ep-policy')?.value||'',
+  };
+  state.contacts=state.contacts.map(c=>c.id===id?{...c,...updates}:c);
+  save();closeModal();openContact(id);state.contactTab='products';render();
+}
+
+function openEditFamily(id){
+  const c=getC(id);if(!c)return;
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">Family & Personal — ${c.name}</div>
+      ${[['Birthday','date','birthday',c.birthday],['Anniversary','date','anniversary',c.anniversary],['Age','number','age',c.age],['No. of Children','number','children',c.children],['Family Members','number','familyMembers',c.familyMembers],['Spouse Name','text','spouseName',c.spouseName]].map(([l,t,k,v])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input type="${t}" id="ef-${k}" class="input" value="${v||''}"/></div>`).join('')}
+      <div style="margin-bottom:20px"><label class="label">Goals (comma-separated)</label><input id="ef-goals" class="input" value="${(c.goals||[]).join(', ')}" placeholder="Retirement, Child Education, Home Purchase"/></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveFamily(${id})">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveFamily(id){
+  const g=k=>document.getElementById('ef-'+k)?.value||'';
+  const updates={
+    birthday:g('birthday'),anniversary:g('anniversary'),
+    age:parseInt(g('age'))||0,children:parseInt(g('children'))||0,
+    familyMembers:parseInt(g('familyMembers'))||0,spouseName:g('spouseName'),
+    goals:g('goals').split(',').map(x=>x.trim()).filter(Boolean),
+  };
+  state.contacts=state.contacts.map(c=>c.id===id?{...c,...updates}:c);
+  save();closeModal();openContact(id);state.contactTab='family';render();
+}
+
+function openEditFinancials(id){
+  const c=getC(id);if(!c)return;
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">Financial Details — ${c.name}</div>
+      ${[['AUM (₹)','number','aum',c.aum],['Commission Earned (₹)','number','commission',c.commission],['Deal Value (₹)','number','value',c.value]].map(([l,t,k,v])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input type="${t}" id="efin-${k}" class="input" value="${v||''}"/></div>`).join('')}
+      <div style="margin-bottom:12px"><label class="label">Income Bracket</label><select id="efin-incomeBracket" class="input">${INCOME_BRACKETS.map(b=>`<option ${b===c.incomeBracket?'selected':''}>${b}</option>`).join('')}</select></div>
+      <div style="margin-bottom:12px"><label class="label">Risk Profile</label><select id="efin-riskProfile" class="input">${RISK_PROFILES.map(b=>`<option ${b===c.riskProfile?'selected':''}>${b}</option>`).join('')}</select></div>
+      <div style="margin-bottom:12px"><label class="label">Client Segment</label><select id="efin-segment" class="input">${CLIENT_SEGMENTS.map(b=>`<option ${b===c.segment?'selected':''}>${b}</option>`).join('')}</select></div>
+      <div style="margin-bottom:12px"><label class="label">KYC Status</label><select id="efin-kycStatus" class="input"><option ${c.kycStatus==='Complete'?'selected':''}>Complete</option><option ${c.kycStatus==='Pending'?'selected':''}>Pending</option><option ${c.kycStatus==='Expired'?'selected':''}>Expired</option></select></div>
+      ${[['PAN Number','text','panNumber',c.panNumber],['Nominee','text','nominee',c.nominee],['Referred By','text','referredBy',c.referredBy]].map(([l,t,k,v])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input type="${t}" id="efin-${k}" class="input" value="${v||''}"/></div>`).join('')}
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveFinancials(${id})">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveFinancials(id){
+  const g=k=>document.getElementById('efin-'+k)?.value||'';
+  const updates={
+    aum:parseInt(g('aum'))||0,commission:parseInt(g('commission'))||0,value:parseInt(g('value'))||0,
+    incomeBracket:g('incomeBracket'),riskProfile:g('riskProfile'),segment:g('segment'),
+    kycStatus:g('kycStatus'),panNumber:g('panNumber'),nominee:g('nominee'),referredBy:g('referredBy'),
+  };
+  state.contacts=state.contacts.map(c=>c.id===id?{...c,...updates}:c);
+  save();closeModal();openContact(id);state.contactTab='financials';render();
+}
+
+// ── Add Contact ───────────────────────────────────────────────────────────────
+function openAddContact(){
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="max-width:560px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">New Client</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
+        ${[['Full Name *','text','name',''],['Phone *','tel','phone',''],['Email','email','email',''],['WhatsApp','tel','whatsapp',''],['Company','text','company',''],['Role / Profession','text','role',''],['Deal Value (₹)','number','value',''],['AUM (₹)','number','aum','']].map(([l,t,k])=>`<div><label class="label">${l}</label><input type="${t}" id="nc-${k}" class="input" placeholder="${l}"/></div>`).join('')}
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
+        <div><label class="label">Stage</label><select id="nc-stage" class="input">${STAGES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div><label class="label">Segment</label><select id="nc-segment" class="input">${CLIENT_SEGMENTS.map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div><label class="label">Risk Profile</label><select id="nc-riskProfile" class="input">${RISK_PROFILES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div><label class="label">Income Bracket</label><select id="nc-incomeBracket" class="input">${INCOME_BRACKETS.map(s=>`<option>${s}</option>`).join('')}</select></div>
+      </div>
+      <div style="margin-top:12px"><label class="label">Tags (comma-separated)</label><input id="nc-tags" class="input" placeholder="HNI, Insurance, MF"/></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewContact()">Save Client</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveNewContact(){
+  const g=k=>document.getElementById('nc-'+k)?.value||'';
+  const name=g('name');
+  if(!name.trim())return alert('Name is required');
+  const c={
+    id:Date.now(),name,phone:g('phone'),email:g('email'),whatsapp:g('whatsapp'),
+    company:g('company'),role:g('role'),value:parseInt(g('value'))||0,aum:parseInt(g('aum'))||0,
+    stage:g('stage'),segment:g('segment'),riskProfile:g('riskProfile'),incomeBracket:g('incomeBracket'),
+    tags:g('tags').split(',').map(t=>t.trim()).filter(Boolean),
+    color:COLORS[state.contacts.length%COLORS.length],
+    lastContact:new Date().toISOString().split('T')[0],
+    nextFollowUp:new Date(Date.now()+7*86400000).toISOString().split('T')[0],
+    notes:[],health:50,products:[],prospectProducts:[],goals:[],referrals:[],
+    commission:0,kycStatus:'Pending',
+  };
+  state.contacts.unshift(c);
+  save();closeModal();render();
+}
+
+// ── Import CSV ────────────────────────────────────────────────────────────────
+function openImportCSV(){
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px">📱 Import Contacts</div>
+      <div style="font-size:13px;color:#555;margin-bottom:20px">Import from your phone contacts (exported as CSV) or from any spreadsheet</div>
+      <div style="background:#0d0d12;border:1px solid #1e1e2e;border-radius:8px;padding:14px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:#7ec8c8;margin-bottom:8px">HOW TO EXPORT FROM PHONE</div>
+        <div style="font-size:12px;color:#666;line-height:1.8">
+          <b style="color:#aaa">Android:</b> Open Contacts → Menu → Export → Save as CSV<br>
+          <b style="color:#aaa">iPhone:</b> Use "Contacts+" app → Export → CSV<br>
+          <b style="color:#aaa">Google Contacts:</b> contacts.google.com → Export → Google CSV
+        </div>
+      </div>
+      <div style="font-size:12px;color:#555;margin-bottom:8px">Expected CSV columns: Name, Phone, Email, Company (optional)</div>
+      <label class="btn-primary" style="display:block;text-align:center;cursor:pointer;margin-bottom:12px">
+        📁 Choose CSV File
+        <input type="file" accept=".csv" onchange="importCSV(event)" style="display:none"/>
+      </label>
+      <div id="import-preview"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn-secondary" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+
+function importCSV(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const lines=ev.target.result.split('\n').filter(l=>l.trim());
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/['"]/g,''));
+    const nameIdx=headers.findIndex(h=>h.includes('name'));
+    const phoneIdx=headers.findIndex(h=>h.includes('phone')||h.includes('mobile')||h.includes('number'));
+    const emailIdx=headers.findIndex(h=>h.includes('email'));
+    const companyIdx=headers.findIndex(h=>h.includes('company')||h.includes('org'));
+    const imported=[];
+    for(let i=1;i<lines.length;i++){
+      const cols=lines[i].split(',').map(c=>c.trim().replace(/['"]/g,''));
+      const name=nameIdx>=0?cols[nameIdx]:'';
+      if(!name)continue;
+      imported.push({
+        id:Date.now()+i,name,phone:phoneIdx>=0?cols[phoneIdx]:'',
+        email:emailIdx>=0?cols[emailIdx]:'',company:companyIdx>=0?cols[companyIdx]:'',
+        whatsapp:phoneIdx>=0?cols[phoneIdx]:'',role:'',value:0,aum:0,stage:'Lead',
+        segment:'Retail',riskProfile:'Moderate',incomeBracket:'₹5L-10L',
+        tags:['Imported'],color:COLORS[Math.floor(Math.random()*COLORS.length)],
+        lastContact:new Date().toISOString().split('T')[0],
+        nextFollowUp:new Date(Date.now()+7*86400000).toISOString().split('T')[0],
+        notes:[],health:50,products:[],prospectProducts:[],goals:[],referrals:[],commission:0,kycStatus:'Pending',
+      });
+    }
+    const preview=document.getElementById('import-preview');
+    if(!preview)return;
+    if(imported.length===0){preview.innerHTML='<div style="color:#e07070;font-size:13px">No valid contacts found. Check CSV format.</div>';return;}
+    preview.innerHTML=`<div style="background:#0d1a0d;border:1px solid #1a3a1a;border-radius:8px;padding:12px;margin-bottom:12px"><div style="color:#5ba85b;font-weight:600;margin-bottom:8px">✓ Found ${imported.length} contacts</div>${imported.slice(0,3).map(c=>`<div style="font-size:12px;color:#aaa;margin-bottom:4px">• ${c.name}${c.phone?' — '+c.phone:''}</div>`).join('')}${imported.length>3?`<div style="font-size:12px;color:#555">...and ${imported.length-3} more</div>`:''}</div><button class="btn-primary" onclick="confirmImport(${JSON.stringify(imported).replace(/"/g,'&quot;')})">Import ${imported.length} Contacts</button>`;
+  };
+  reader.readAsText(file);
+}
+
+function confirmImport(data){
+  // data passed as JSON string via onclick
+  const imported=typeof data==='string'?JSON.parse(data.replace(/&quot;/g,'"')):data;
+  state.contacts=[...state.contacts,...imported];
+  save();closeModal();render();
+  alert(`✅ Imported ${imported.length} contacts successfully!`);
+}
+
+// ── AI ────────────────────────────────────────────────────────────────────────
+async function callClaude(messages,system){
+  const key=state.settings.apiKey;
+  if(!key){openSettings();return null;}
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages})
+  });
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message);
+  return data.content.map(b=>b.text||'').join('');
+}
+
+let currentAiMode='insights';
+function setAiMode(m){
+  currentAiMode=m;
+  const labels={insights:'Generate Insights',email:'Draft Email',engage:'Engagement Ideas',products:'Cross-sell Opportunities',whatsapp:'Draft WhatsApp Message'};
+  ['insights','email','engage','products','whatsapp'].forEach(k=>{
+    const btn=document.getElementById('ai-btn-'+k);
+    if(btn){btn.style.background=k===m?'#1e1e1e':'transparent';btn.style.color=k===m?'#e8e8e8':'#aaa';btn.style.borderColor=k===m?'#444':'#2e2e2e';}
+  });
+  const rb=document.getElementById('ai-run-btn');
+  if(rb)rb.textContent=labels[m]||'Run';
+}
+
+async function runAI(id){
+  const c=getC(id);if(!c)return;
+  const out=document.getElementById('ai-output');
+  const btn=document.getElementById('ai-run-btn');
+  if(!out||!btn)return;
+  out.innerHTML='<span class="spinner"></span> Claude is thinking…';
+  btn.disabled=true;
+  const company=state.settings.companyName||'our financial consultancy';
+  const owner=state.settings.ownerName||'our team';
+  const sys=`You are an expert financial advisor assistant for ${company}. You help with client relationship management, insurance, investments, and loans. Be specific, actionable, and concise. Use Indian financial context (₹, Indian regulations, LIC, HDFC, SBI etc).`;
+  const clientInfo=`Client: ${c.name} | Company: ${c.company||'—'} | Segment: ${c.segment} | Risk: ${c.riskProfile} | Income: ${c.incomeBracket}
+AUM: ₹${(c.aum||0).toLocaleString('en-IN')} | Products: ${(c.products||[]).map(pid=>getProduct(pid)?.name).join(', ')||'None'} | Prospect: ${(c.prospectProducts||[]).map(pid=>getProduct(pid)?.name).join(', ')||'None'}
+Stage: ${c.stage} | Last contact: ${daysAgo(c.lastContact)} days ago | Health: ${c.health}%
+Notes: ${(c.notes||[]).slice(0,2).map(n=>n.text).join(' | ')||'None'}`;
+  const prompts={
+    insights:`${clientInfo}\n\nGive 4 sharp insights and next best actions for this financial services client. Include specific product recommendations based on their profile.`,
+    email:`${clientInfo}\n\nDraft a professional follow-up email from ${owner} at ${company}. Goal: strengthen relationship and identify upsell opportunity. Under 150 words. Subject line included.`,
+    engage:`${clientInfo}\n\nSuggest 3 creative, genuine ways to engage this client. Consider their life stage (family: ${c.familyMembers||'?'} members, children: ${c.children||0}, anniversary: ${c.anniversary?'yes':'no'}). Ideas should feel personal, not promotional.`,
+    products:`${clientInfo}\n\nAnalyze this client's financial profile and suggest the top 3 products they don't have yet that would genuinely benefit them. For each: explain why it suits them, estimated premium/investment, and how to pitch it.`,
+    whatsapp:`${clientInfo}\n\nDraft a brief, warm WhatsApp message for this client. Keep it under 50 words. Friendly tone. Context: ${daysAgo(c.lastContact)} days since last contact. Sign off as ${owner}.`,
+  };
+  try{
+    const result=await callClaude([{role:'user',content:prompts[currentAiMode]}],sys);
+    out.innerHTML=result?`<div style="font-size:13px;color:#ccc;line-height:1.75;white-space:pre-wrap">${result}</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button onclick="navigator.clipboard.writeText(document.querySelector('#ai-output div').textContent)" class="btn-secondary" style="font-size:11px;padding:5px 12px">📋 Copy</button>
+        ${currentAiMode==='whatsapp'&&(c.whatsapp||c.phone)?`<button onclick="openWhatsApp('${c.whatsapp||c.phone}',document.querySelector('#ai-output div').textContent)" style="background:#25D366;border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">💬 Send on WhatsApp</button>`:''}
+        ${currentAiMode==='email'&&c.email?`<a href="mailto:${c.email}" style="background:#1e1e1e;border:1px solid #2e2e2e;color:#aaa;border-radius:6px;padding:5px 12px;font-size:11px;text-decoration:none">✉️ Open Email</a>`:''}
+      </div>`:'No response.';
+  }catch(e){out.innerHTML=`<span style="color:#e07070">Error: ${e.message}</span>`;}
+  btn.disabled=false;
+}
+
+// ── AI Chat ───────────────────────────────────────────────────────────────────
+function renderAI(){
+  const msgs=state.chatHistory;
   return `
-  <div style="font-size:22px;font-weight:700;margin-bottom:16px">CRM Assistant</div>
-  ${!state.settings.apiKey?`<div style="background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;color:#f4c97a">Add your API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:13px;padding:0">Settings</button> to chat.</div>`:''}
+  <div style="font-size:22px;font-weight:700;margin-bottom:16px">✦ AI Assistant</div>
+  ${!state.settings.apiKey?`<div class="alert-card" style="margin-bottom:12px"><div style="font-size:13px;color:#f4c97a">Add API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:13px;padding:0">Settings</button> to use AI chat.</div></div>`:''}
   <div class="card" style="display:flex;flex-direction:column;height:calc(100dvh - 220px)">
     <div id="chat-messages" style="flex:1;overflow-y:auto;padding-bottom:8px">
-      ${msgs.length===0?`<div style="color:#444;font-size:13px;padding:16px 0">Ask me anything about your pipeline, clients, or strategy.
+      ${msgs.length===0?`<div style="color:#444;font-size:13px;padding:12px 0">Ask me anything about your clients, pipeline, or financial advisory strategy.
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
-          ${["Who needs a follow-up this week?","Which deal is most at risk?","Draft a re-engagement strategy for my cold leads."].map(q=>`<button onclick="setChatInput('${q}')" style="background:transparent;border:1px solid #1e1e1e;border-radius:8px;padding:10px 14px;color:#555;cursor:pointer;font-size:12px;text-align:left;font-family:inherit">${q}</button>`).join('')}
+          ${["Who needs a policy renewal follow-up?","Which clients are good candidates for mutual funds?","Draft a marketing message for health insurance season","Which HNI clients haven't been contacted in 30+ days?","Suggest cross-sell opportunities for my top clients"].map(q=>`<button onclick="setChatInput(\`${q}\`)" style="background:transparent;border:1px solid #1e1e1e;border-radius:8px;padding:10px 14px;color:#555;cursor:pointer;font-size:12px;text-align:left;font-family:inherit">${q}</button>`).join('')}
         </div>
       </div>`:''}
       ${msgs.map(m=>`<div style="margin-bottom:14px;display:flex;flex-direction:${m.role==='user'?'row-reverse':'row'};gap:8px"><div style="max-width:80%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.65;background:${m.role==='user'?'#1e1e1e':'#141414'};border:1px solid ${m.role==='user'?'#2e2e2e':'#1a1a1a'};color:#d8d8d8;white-space:pre-wrap">${m.content}</div></div>`).join('')}
       <div id="chat-end"></div>
     </div>
     <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid #1e1e1e">
-      <input id="chatInput" class="input" placeholder="Ask about your pipeline…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()"/>
+      <input id="chatInput" class="input" placeholder="Ask about clients, products, pipeline…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()"/>
       <button class="btn-primary" onclick="sendChat()">Send</button>
     </div>
   </div>`;
 }
 
-function scrollChatBottom() {
-  setTimeout(()=>{const el=document.getElementById('chat-end');if(el)el.scrollIntoView()},100);
-}
+function scrollChatBottom(){setTimeout(()=>{const el=document.getElementById('chat-end');if(el)el.scrollIntoView();},100);}
+function setChatInput(q){const el=document.getElementById('chatInput');if(el)el.value=q;}
 
-// ── Actions ──────────────────────────────────────────────────────────────────
-let currentAiMode = 'insights';
-function setAiMode(m) {
-  currentAiMode = m;
-  const labels = {insights:'Generate Insights',email:'Draft Email',engage:'Get Ideas'};
-  ['insights','email','engage'].forEach(k=>{
-    const btn=document.getElementById('ai-btn-'+k);
-    if(btn){btn.style.background=k===m?'#1e1e1e':'transparent';btn.style.color=k===m?'#e8e8e8':'#555';btn.style.borderColor=k===m?'#444':'#1e1e1e';}
-  });
-  const rb=document.getElementById('ai-run-btn');
-  if(rb)rb.textContent=labels[m];
-}
-
-function openContact(id) {
-  state.selectedId = id;
-  state.view = 'contacts';
-  render();
-}
-
-function updateStage(id, stage) {
-  state.contacts = state.contacts.map(c=>c.id===id?{...c,stage}:c);
-  save();
-}
-
-function deleteContact(id) {
-  if(!confirm('Delete this contact?')) return;
-  state.contacts = state.contacts.filter(c=>c.id!==id);
-  state.selectedId = null;
-  save();
-  setView('dashboard');
-}
-
-function addNote(id) {
-  const input = document.getElementById('noteInput');
-  if(!input||!input.value.trim()) return;
-  const note = {id:Date.now(),date:new Date().toISOString().split('T')[0],text:input.value.trim()};
-  state.contacts = state.contacts.map(c=>c.id===id?{...c,notes:[note,...c.notes],lastContact:note.date}:c);
-  save();
-  openContact(id);
-}
-
-function setChatInput(q) {
-  const el=document.getElementById('chatInput');
-  if(el)el.value=q;
-}
-
-// ── AI ───────────────────────────────────────────────────────────────────────
-async function callClaude(messages, system) {
-  const key = state.settings.apiKey;
-  if(!key) { openSettings(); return null; }
-  const res = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages})
-  });
-  const data = await res.json();
-  if(data.error) throw new Error(data.error.message);
-  return data.content.map(b=>b.text||'').join('');
-}
-
-async function runAI(id) {
-  const c = getContact(id);
-  if(!c) return;
-  const out = document.getElementById('ai-output');
-  const btn = document.getElementById('ai-run-btn');
-  if(!out||!btn) return;
-  out.innerHTML = '<span class="spinner"></span> Thinking…';
-  btn.disabled = true;
-  const sys = `You are a CRM assistant for ${state.settings.companyName||'a small business'}. Be concise and actionable.`;
-  const prompts = {
-    insights:`Analyze this client and give 3-4 sharp insights + next best actions:\nName: ${c.name} | Company: ${c.company} | Stage: ${c.stage} | Value: $${c.value} | Health: ${c.health}%\nLast contact: ${daysAgo(c.lastContact)} days ago\nNotes: ${c.notes.map(n=>n.text).join(' | ')||'None'}`,
-    email:`Draft a warm follow-up email to ${c.name} at ${c.company}.\nStage: ${c.stage}. Value: $${c.value}. Last contacted ${daysAgo(c.lastContact)} days ago.\nNote: ${c.notes[0]?.text||'None'}. Under 130 words. Sign off as "${state.settings.ownerName||'The Team'} from ${state.settings.companyName||'us'}".`,
-    engage:`Suggest 3 creative ways to stay top-of-mind with ${c.name} (${c.role} at ${c.company}). Tags: ${c.tags.join(', ')}. Health: ${c.health}%.`,
-  };
-  try {
-    const result = await callClaude([{role:'user',content:prompts[currentAiMode]}], sys);
-    out.innerHTML = result ? result.replace(/\n/g,'<br>') + `<br><button onclick="navigator.clipboard.writeText(\`${result.replace(/`/g,"'")}\`)" class="btn-secondary" style="margin-top:12px;font-size:11px;padding:5px 12px">Copy</button>` : 'No response.';
-  } catch(e) {
-    out.innerHTML = `<span style="color:#e07070">Error: ${e.message}</span>`;
-  }
-  btn.disabled = false;
-}
-
-async function sendChat() {
-  const input = document.getElementById('chatInput');
-  if(!input||!input.value.trim()) return;
-  const msg = {role:'user',content:input.value.trim()};
-  state.chatHistory.push(msg);
-  input.value = '';
-  render();
-  const sys = `You are a CRM assistant for ${state.settings.companyName||'a small business'}. Contacts:\n${state.contacts.map(c=>`${c.name} (${c.company}, ${c.stage}, $${c.value}, health ${c.health}%)`).join('\n')}\nBe concise and practical.`;
-  try {
-    const result = await callClaude(state.chatHistory, sys);
+async function sendChat(){
+  const input=document.getElementById('chatInput');
+  if(!input||!input.value.trim())return;
+  const msg={role:'user',content:input.value.trim()};
+  state.chatHistory.push(msg);input.value='';render();
+  const sys=`You are an expert financial advisor CRM assistant for ${state.settings.companyName||'a financial consultancy'}. 
+Client data: ${state.contacts.map(c=>`${c.name} (${c.segment}, ${c.stage}, AUM:₹${(c.aum||0).toLocaleString('en-IN')}, products:${(c.products||[]).map(p=>getProduct(p)?.name).join('/')||'none'}, last contact:${daysAgo(c.lastContact)}d ago, renewal:${c.renewalDate||'none'})`).join('\n')}
+Total AUM: ₹${state.contacts.reduce((s,c)=>s+(c.aum||0),0).toLocaleString('en-IN')}. Be specific and practical. Use Indian financial context.`;
+  try{
+    const result=await callClaude(state.chatHistory,sys);
     state.chatHistory.push({role:'assistant',content:result||'No response'});
-  } catch(e) {
-    state.chatHistory.push({role:'assistant',content:'Error: '+e.message});
-  }
+  }catch(e){state.chatHistory.push({role:'assistant',content:'Error: '+e.message});}
   render();
 }
 
-// ── Modals ───────────────────────────────────────────────────────────────────
-function closeModal() { document.getElementById('modal-container').innerHTML=''; }
-
-function openAddContact() {
-  document.getElementById('modal-container').innerHTML = `
+// ── Change Request ────────────────────────────────────────────────────────────
+function openChangeRequest(){
+  document.getElementById('modal-container').innerHTML=`
   <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div style="font-size:18px;font-weight:700;margin-bottom:20px">New Contact</div>
-      ${[['name','Full Name *'],['company','Company'],['role','Role / Title'],['email','Email'],['phone','Phone'],['value','Deal Value (₹)'],['tags','Tags (comma-separated)']].map(([k,l])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input id="nc-${k}" class="input" placeholder="${l}"/></div>`).join('')}
-      <div style="margin-bottom:20px"><label class="label">Stage</label><select id="nc-stage" class="input">${STAGES.map(s=>`<option>${s}</option>`).join('')}</select></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn-primary" onclick="saveNewContact()">Save Contact</button>
+    <div class="modal" style="max-width:520px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px">✦ Request a Change</div>
+      <div style="font-size:13px;color:#555;margin-bottom:16px">Describe any feature or improvement you want added to this CRM.</div>
+      <textarea id="cr-input" class="input" style="height:100px;resize:vertical;line-height:1.6" placeholder="e.g. Add a commission tracker by product, add SIP reminder emails, show a monthly revenue chart…"></textarea>
+      <button class="btn-primary" onclick="submitChangeRequest()" style="width:100%;margin-top:12px;margin-bottom:16px" id="cr-btn">Get Implementation Guide</button>
+      <div id="cr-output"></div>
+      <div style="background:#0d0d12;border:1px solid #1e1e2e;border-radius:8px;padding:14px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:#7ec8c8;margin-bottom:8px">HOW TO APPLY CHANGES</div>
+        <div style="font-size:12px;color:#666;line-height:1.7">1. Copy the instructions<br>2. Go to GitHub → index.html → ✏ Edit<br>3. Apply changes → Commit<br>4. Vercel auto-redeploys in 30 seconds!</div>
       </div>
+      <div style="display:flex;justify-content:flex-end"><button class="btn-secondary" onclick="closeModal()">Close</button></div>
     </div>
   </div>`;
 }
 
-function saveNewContact() {
-  const g = id => document.getElementById('nc-'+id)?.value||'';
-  const name = g('name');
-  if(!name.trim()) return alert('Name is required');
-  const tags = g('tags').split(',').map(t=>t.trim()).filter(Boolean);
-  const c = {
-    id:Date.now(), name, company:g('company'), role:g('role'), email:g('email'), phone:g('phone'),
-    value:parseInt(g('value'))||0, stage:g('stage'), tags,
-    color:COLORS[state.contacts.length%COLORS.length],
-    lastContact:new Date().toISOString().split('T')[0],
-    nextFollowUp:new Date(Date.now()+7*86400000).toISOString().split('T')[0],
-    notes:[], health:50,
-  };
-  state.contacts.unshift(c);
-  save(); closeModal(); render();
+async function submitChangeRequest(){
+  const req=document.getElementById('cr-input')?.value;
+  if(!req?.trim())return;
+  const out=document.getElementById('cr-output');
+  const btn=document.getElementById('cr-btn');
+  out.innerHTML='<span class="spinner"></span> Claude is thinking…';
+  btn.disabled=true;
+  const sys=`You are a developer for Relatio CRM — a single-file HTML/vanilla JS CRM for Indian financial consultants. Give exact code changes for index.html.`;
+  try{
+    const result=await callClaude([{role:'user',content:`Feature request:\n\n${req}\n\nExplain exactly what to change in index.html.`}],sys);
+    out.innerHTML=`<div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:16px"><span class="label">Implementation Guide</span><div style="font-size:13px;color:#ccc;line-height:1.75;white-space:pre-wrap">${result}</div><button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)" class="btn-secondary" style="margin-top:12px;font-size:11px;padding:5px 12px">📋 Copy</button></div>`;
+  }catch(e){out.innerHTML=`<span style="color:#e07070">Error: ${e.message}</span>`;}
+  btn.disabled=false;
 }
 
-function openSettings() {
-  document.getElementById('modal-container').innerHTML = `
+// ── Settings ──────────────────────────────────────────────────────────────────
+function openSettings(){
+  document.getElementById('modal-container').innerHTML=`
   <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
     <div class="modal">
-      <div style="font-size:18px;font-weight:700;margin-bottom:6px">⚙ Settings</div>
-      <div style="font-size:13px;color:#555;margin-bottom:24px">Configure your CRM and AI access</div>
-      <div style="margin-bottom:14px"><label class="label">Anthropic API Key</label><input id="s-key" type="password" class="input" placeholder="sk-ant-…" value="${state.settings.apiKey||''}"/><div style="font-size:11px;color:#444;margin-top:4px">Get it at console.anthropic.com — stored locally only</div></div>
-      <div style="margin-bottom:14px"><label class="label">Your Name</label><input id="s-name" class="input" placeholder="e.g. Alex" value="${state.settings.ownerName||''}"/></div>
-      <div style="margin-bottom:24px"><label class="label">Company Name</label><input id="s-company" class="input" placeholder="e.g. My Company" value="${state.settings.companyName||''}"/></div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">⚙ Settings</div>
+      <div style="margin-bottom:14px"><label class="label">Anthropic API Key</label><input id="s-key" type="password" class="input" placeholder="sk-ant-…" value="${state.settings.apiKey||''}"/><div style="font-size:11px;color:#444;margin-top:4px">Get it at console.anthropic.com — stored in your browser only</div></div>
+      <div style="margin-bottom:14px"><label class="label">Your Name</label><input id="s-name" class="input" placeholder="e.g. Shruti" value="${state.settings.ownerName||''}"/></div>
+      <div style="margin-bottom:24px"><label class="label">Company Name</label><input id="s-company" class="input" placeholder="e.g. Shruti Consultancy" value="${state.settings.companyName||''}"/></div>
       <div style="border-top:1px solid #1e1e1e;padding-top:16px;margin-bottom:20px">
         <div style="font-size:13px;font-weight:600;margin-bottom:8px">Data Backup</div>
+        <div style="font-size:12px;color:#555;margin-bottom:10px">All data saved in your browser. Export regularly to backup.</div>
         <div style="display:flex;gap:8px">
-          <button class="btn-secondary" onclick="exportData()" style="font-size:12px">⬇ Export</button>
+          <button class="btn-secondary" onclick="exportData()" style="font-size:12px">⬇ Export JSON</button>
           <label class="btn-secondary" style="font-size:12px;cursor:pointer">⬆ Import<input type="file" accept=".json" onchange="importData(event)" style="display:none"/></label>
         </div>
       </div>
@@ -436,66 +1015,24 @@ function openSettings() {
   </div>`;
 }
 
-function saveSettings() {
-  state.settings = {
-    apiKey: document.getElementById('s-key')?.value||'',
-    ownerName: document.getElementById('s-name')?.value||'',
-    companyName: document.getElementById('s-company')?.value||'',
-  };
-  save(); closeModal();
-  alert('Settings saved! ✅');
+function saveSettings(){
+  state.settings={apiKey:document.getElementById('s-key')?.value||'',ownerName:document.getElementById('s-name')?.value||'',companyName:document.getElementById('s-company')?.value||''};
+  save();closeModal();alert('Settings saved! ✅');
 }
-
-function exportData() {
-  const blob = new Blob([JSON.stringify({contacts:state.contacts,settings:state.settings,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='relatio-backup.json';a.click();
+function exportData(){
+  const blob=new Blob([JSON.stringify({contacts:state.contacts,settings:state.settings,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`relatio-backup-${new Date().toISOString().split('T')[0]}.json`;a.click();
 }
-
-function importData(e) {
+function importData(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=ev=>{
-    try{const d=JSON.parse(ev.target.result);if(d.contacts)state.contacts=d.contacts;if(d.settings)state.settings=d.settings;save();closeModal();render();alert('Imported!');}
-    catch{alert('Invalid file');}
-  };reader.readAsText(file);
+  reader.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.contacts)state.contacts=d.contacts;if(d.settings)state.settings=d.settings;save();closeModal();render();alert('Imported!');}catch{alert('Invalid file');}};
+  reader.readAsText(file);
 }
+function closeModal(){document.getElementById('modal-container').innerHTML='';}
 
-function openChangeRequest() {
-  document.getElementById('modal-container').innerHTML = `
-  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal" style="max-width:520px">
-      <div style="font-size:18px;font-weight:700;margin-bottom:6px">✦ Request a Change</div>
-      <div style="font-size:13px;color:#555;margin-bottom:16px">Describe any feature or improvement you want. Claude will give you exact implementation steps.</div>
-      <div style="margin-bottom:12px"><label class="label">What would you like?</label><textarea id="cr-input" class="input" style="height:100px;resize:vertical;line-height:1.6" placeholder="e.g. Add a birthday field, change color scheme, add calendar view…"></textarea></div>
-      <button class="btn-primary" onclick="submitChangeRequest()" style="width:100%;margin-bottom:16px" id="cr-btn">Get Implementation Guide</button>
-      <div id="cr-output"></div>
-      <div style="background:#0d0d12;border:1px solid #1e1e2e;border-radius:8px;padding:14px;margin-bottom:16px">
-        <div style="font-size:11px;font-weight:600;color:#7ec8c8;margin-bottom:8px">HOW TO APPLY CHANGES</div>
-        <div style="font-size:12px;color:#666;line-height:1.7">1. Copy the instructions above<br>2. Open index.html in GitHub → click ✏ Edit<br>3. Make the changes → Commit<br>4. Vercel auto-redeploys in 30 seconds!</div>
-      </div>
-      <div style="display:flex;justify-content:flex-end"><button class="btn-secondary" onclick="closeModal()">Close</button></div>
-    </div>
-  </div>`;
-}
-
-async function submitChangeRequest() {
-  const req=document.getElementById('cr-input')?.value;
-  if(!req?.trim())return;
-  const out=document.getElementById('cr-output');
-  const btn=document.getElementById('cr-btn');
-  if(!out||!btn)return;
-  out.innerHTML='<span class="spinner"></span> Claude is thinking…';
-  btn.disabled=true;
-  const sys=`You are a developer assistant for Relatio CRM — a single-file HTML/JS CRM app. When given a feature request, explain exactly what code changes to make in index.html. Be specific and actionable.`;
-  try{
-    const result=await callClaude([{role:'user',content:`Feature request for Relatio CRM:\n\n${req}\n\nExplain exactly what code changes to make in index.html.`}],sys);
-    out.innerHTML=`<div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:16px"><div class="label" style="margin-bottom:12px">Claude's Response</div><div style="font-size:13px;color:#ccc;line-height:1.75;white-space:pre-wrap">${result}</div><button onclick="navigator.clipboard.writeText(\`${(result||'').replace(/`/g,"'")}\`)" class="btn-secondary" style="margin-top:12px;font-size:11px;padding:5px 12px">Copy</button></div>`;
-  }catch(e){out.innerHTML=`<span style="color:#e07070">Error: ${e.message}</span>`;}
-  btn.disabled=false;
-}
-
-// ── Init ─────────────────────────────────────────────────────────────────────
-if(!state.settings.apiKey) openSettings();
+// ── Init ──────────────────────────────────────────────────────────────────────
+if(!state.settings.apiKey)openSettings();
 render();
 </script>
 </body>
