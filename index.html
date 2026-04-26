@@ -70,11 +70,11 @@ const STAGES = ["Lead","Proposal","Negotiation","Active","Closed Won","Churned"]
 const STAGE_COLORS = {Lead:"#c4a8d4",Proposal:"#7ec8c8",Negotiation:"#f4c97a",Active:"#a8d5a2","Closed Won":"#5ba85b",Churned:"#c4c4c4"};
 const COLORS = ["#e8a87c","#7ec8c8","#a8d5a2","#c4a8d4","#f4c97a","#f4a261","#87b4e8","#e887b4"];
 const SEED = [
-  {id:1,name:"Sarah Chen",company:"Bloom Studio",role:"Creative Director",email:"sarah@bloomstudio.co",phone:"+1 415 555 0192",stage:"Active",value:12400,lastContact:"2026-04-18",nextFollowUp:"2026-04-28",tags:["Design","Retainer"],color:"#e8a87c",notes:[{id:1,date:"2026-04-18",text:"Discussed Q2 brand refresh. She loves the moodboard direction."},{id:2,date:"2026-04-10",text:"Intro call went well. Budget around $12k."}],health:92},
-  {id:2,name:"Marcus Webb",company:"Northline Realty",role:"Managing Partner",email:"m.webb@northline.com",phone:"+1 312 555 0847",stage:"Proposal",value:8500,lastContact:"2026-04-14",nextFollowUp:"2026-04-25",tags:["Real Estate"],color:"#7ec8c8",notes:[{id:1,date:"2026-04-14",text:"Sent proposal. Awaiting feedback."}],health:65},
-  {id:3,name:"Priya Nair",company:"Verdant Foods",role:"Head of Marketing",email:"priya.nair@verdant.com",phone:"+1 213 555 0334",stage:"Negotiation",value:21000,lastContact:"2026-04-20",nextFollowUp:"2026-04-26",tags:["CPG","High Value"],color:"#a8d5a2",notes:[{id:1,date:"2026-04-20",text:"Counter-offer received. She wants 6-month retainer at $3,500/mo."}],health:78},
-  {id:4,name:"Tom Okafor",company:"Kira Legal",role:"Partner",email:"tokafor@kiralegal.com",phone:"+1 617 555 0561",stage:"Lead",value:4200,lastContact:"2026-03-30",nextFollowUp:"2026-04-27",tags:["Legal"],color:"#c4a8d4",notes:[],health:40},
-  {id:5,name:"Elena Vasquez",company:"Dune Hospitality",role:"CEO",email:"elena@dunehospitality.com",phone:"+1 702 555 0228",stage:"Closed Won",value:35000,lastContact:"2026-04-22",nextFollowUp:"2026-05-10",tags:["VIP"],color:"#f4a261",notes:[{id:1,date:"2026-04-22",text:"Project kicked off!"}],health:97},
+  {id:1,name:"Sarah Chen",company:"Bloom Studio",role:"Creative Director",email:"sarah@bloomstudio.co",phone:"+91 98765 43210",stage:"Active",value:95000,lastContact:"2026-04-18",nextFollowUp:"2026-04-28",tags:["Design","Retainer"],color:"#e8a87c",notes:[{id:1,date:"2026-04-18",text:"Discussed Q2 brand refresh. She loves the moodboard direction."},{id:2,date:"2026-04-10",text:"Intro call went well. Budget around ₹95k."}],health:92},
+  {id:2,name:"Marcus Webb",company:"Northline Realty",role:"Managing Partner",email:"m.webb@northline.com",phone:"+91 98765 43211",stage:"Proposal",value:72000,lastContact:"2026-04-14",nextFollowUp:"2026-04-25",tags:["Real Estate"],color:"#7ec8c8",notes:[{id:1,date:"2026-04-14",text:"Sent proposal. Awaiting feedback."}],health:65},
+  {id:3,name:"Priya Nair",company:"Verdant Foods",role:"Head of Marketing",email:"priya.nair@verdant.com",phone:"+91 98765 43212",stage:"Negotiation",value:180000,lastContact:"2026-04-20",nextFollowUp:"2026-04-26",tags:["CPG","High Value"],color:"#a8d5a2",notes:[{id:1,date:"2026-04-20",text:"Counter-offer received. She wants 6-month retainer at ₹30,000/mo."}],health:78},
+  {id:4,name:"Tom Okafor",company:"Kira Legal",role:"Partner",email:"tokafor@kiralegal.com",phone:"+91 98765 43213",stage:"Lead",value:35000,lastContact:"2026-03-30",nextFollowUp:"2026-04-27",tags:["Legal"],color:"#c4a8d4",notes:[],health:40},
+  {id:5,name:"Elena Vasquez",company:"Dune Hospitality",role:"CEO",email:"elena@dunehospitality.com",phone:"+91 98765 43214",stage:"Closed Won",value:300000,lastContact:"2026-04-22",nextFollowUp:"2026-05-10",tags:["VIP"],color:"#f4a261",notes:[{id:1,date:"2026-04-22",text:"Project kicked off!"}],health:97},
 ];
 
 // ── State ───────────────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ function save() {
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const daysAgo = d => Math.floor((new Date() - new Date(d)) / 86400000);
 const daysUntil = d => Math.ceil((new Date(d) - new Date()) / 86400000);
-const fmt = n => '$' + Number(n).toLocaleString();
+const fmt = n => '₹' + Number(n).toLocaleString('en-IN');
 const fmtDate = s => new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
 const initials = n => n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 const getContact = id => state.contacts.find(c => c.id === id);
@@ -385,7 +385,7 @@ function openAddContact() {
   <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
     <div class="modal">
       <div style="font-size:18px;font-weight:700;margin-bottom:20px">New Contact</div>
-      ${[['name','Full Name *'],['company','Company'],['role','Role / Title'],['email','Email'],['phone','Phone'],['value','Deal Value ($)'],['tags','Tags (comma-separated)']].map(([k,l])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input id="nc-${k}" class="input" placeholder="${l}"/></div>`).join('')}
+      ${[['name','Full Name *'],['company','Company'],['role','Role / Title'],['email','Email'],['phone','Phone'],['value','Deal Value (₹)'],['tags','Tags (comma-separated)']].map(([k,l])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input id="nc-${k}" class="input" placeholder="${l}"/></div>`).join('')}
       <div style="margin-bottom:20px"><label class="label">Stage</label><select id="nc-stage" class="input">${STAGES.map(s=>`<option>${s}</option>`).join('')}</select></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn-secondary" onclick="closeModal()">Cancel</button>
