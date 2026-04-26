@@ -1,799 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0d0d0d" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Relatio" />
-  <meta name="description" content="AI-powered CRM for small business client relationships" />
-  <title>Relatio CRM</title>
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body, #root { height: 100%; }
-    body {
-      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-      background: #0d0d0d;
-      color: #e8e8e8;
-      -webkit-font-smoothing: antialiased;
-      overscroll-behavior: none;
-    }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 2px; }
-    input::placeholder, textarea::placeholder { color: #444; }
-    select option { background: #111; }
-    input, textarea, select, button { font-family: inherit; }
-
-    /* PWA install banner */
-    #install-banner {
-      display: none;
-      position: fixed;
-      bottom: 80px;
-      left: 16px; right: 16px;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 12px;
-      padding: 16px;
-      z-index: 999;
-      box-shadow: 0 8px 32px #000a;
-    }
-    #install-banner.show { display: flex; align-items: center; gap: 12px; }
-    #install-banner button {
-      padding: 8px 16px; border-radius: 6px; border: none;
-      background: #e8e8e8; color: #0d0d0d; font-weight: 700;
-      font-size: 13px; cursor: pointer; white-space: nowrap;
-    }
-    #install-banner .dismiss {
-      background: transparent; color: #555; border: 1px solid #2e2e2e;
-    }
-
-    /* Mobile bottom nav */
-    @media (max-width: 640px) {
-      .desktop-nav { display: none !important; }
-      .mobile-nav { display: flex !important; }
-      .header-add-btn { display: none !important; }
-    }
-    @media (min-width: 641px) {
-      .mobile-nav { display: none !important; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#0d0d0d"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Relatio CRM"/>
+<title>Relatio CRM</title>
+<link rel="manifest" href="/manifest.json"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:#0d0d0d;color:#e8e8e8;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:2px}
+input,textarea,select,button{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#444}
+select option{background:#111}
+.card{background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:20px;margin-bottom:16px}
+.label{font-size:11px;font-weight:600;color:#555;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
+.input{background:#0d0d0d;border:1px solid #2e2e2e;border-radius:6px;padding:9px 12px;color:#e8e8e8;font-size:13px;width:100%;outline:none}
+.btn-primary{padding:8px 16px;border-radius:6px;border:none;background:#e8e8e8;color:#0d0d0d;cursor:pointer;font-size:13px;font-weight:700}
+.btn-secondary{padding:8px 16px;border-radius:6px;border:1px solid #2e2e2e;background:transparent;color:#aaa;cursor:pointer;font-size:13px;font-weight:600}
+.pill{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:background .15s}
+.row:hover{background:#141414;border-color:#1e1e1e}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0}
+.nav-btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
+.modal-overlay{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+.modal{background:#111;border:1px solid #2e2e2e;border-radius:14px;padding:28px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.health-track{flex:1;height:4px;background:#2a2a2a;border-radius:2px}
+.health-fill{height:100%;border-radius:2px;transition:width .5s}
+@media(max-width:640px){.desktop-nav{display:none!important}.mobile-nav{display:flex!important}.hide-mobile{display:none!important}}
+@media(min-width:641px){.mobile-nav{display:none!important}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-
-  <!-- PWA Install Banner -->
-  <div id="install-banner">
-    <div style="flex:1">
-      <div style="font-weight:700;font-size:14px;margin-bottom:2px">Install Relatio CRM</div>
-      <div style="font-size:12px;color:#666">Add to home screen for the full app experience</div>
+<div id="app">
+  <!-- Header -->
+  <div id="header" style="background:#111;border-bottom:1px solid #1e1e1e;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100">
+    <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.08em">RELATIO · CRM</div>
+    <div class="desktop-nav" id="desktopNav" style="display:flex;gap:4px"></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn-primary hide-mobile" onclick="openAddContact()" style="padding:6px 14px;font-size:13px">+ Add</button>
+      <button class="btn-secondary" onclick="openSettings()" style="padding:6px 10px;font-size:16px;border-color:#1e1e1e">⚙</button>
     </div>
-    <button class="dismiss" onclick="dismissInstall()">Later</button>
-    <button onclick="installPWA()">Install</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
+  <!-- Main -->
+  <div id="main" style="padding:16px;max-width:1200px;margin:0 auto;min-height:calc(100vh - 52px - 60px)"></div>
 
-  <script>
-    // ── PWA Service Worker ─────────────────────────────────────────────────
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(console.error);
-      });
-    }
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" style="position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #1e1e1e;display:flex;justify-content:space-around;padding:6px 0 20px;z-index:100">
+    <button onclick="setView('dashboard')" id="mnav-dashboard" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">🏠</span>Home</button>
+    <button onclick="setView('pipeline')" id="mnav-pipeline" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">📊</span>Pipeline</button>
+    <button onclick="setView('contacts')" id="mnav-contacts" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">👥</span>Contacts</button>
+    <button onclick="setView('ai')" id="mnav-ai" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#555;font-size:10px;font-weight:600"><span style="font-size:18px">✦</span>AI</button>
+    <button onclick="openAddContact()" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:#e8e8e8;font-size:10px;font-weight:600"><span style="font-size:18px">＋</span>Add</button>
+  </div>
+</div>
 
-    // ── PWA Install Prompt ─────────────────────────────────────────────────
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (!localStorage.getItem('install-dismissed')) {
-        document.getElementById('install-banner').classList.add('show');
-      }
-    });
-    function installPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
-          deferredPrompt = null;
-          document.getElementById('install-banner').classList.remove('show');
-        });
-      }
-    }
-    function dismissInstall() {
-      localStorage.setItem('install-dismissed', '1');
-      document.getElementById('install-banner').classList.remove('show');
-    }
-  </script>
+<!-- Modals -->
+<div id="modal-container"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback } = React;
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+const STAGES = ["Lead","Proposal","Negotiation","Active","Closed Won","Churned"];
+const STAGE_COLORS = {Lead:"#c4a8d4",Proposal:"#7ec8c8",Negotiation:"#f4c97a",Active:"#a8d5a2","Closed Won":"#5ba85b",Churned:"#c4c4c4"};
+const COLORS = ["#e8a87c","#7ec8c8","#a8d5a2","#c4a8d4","#f4c97a","#f4a261","#87b4e8","#e887b4"];
+const SEED = [
+  {id:1,name:"Sarah Chen",company:"Bloom Studio",role:"Creative Director",email:"sarah@bloomstudio.co",phone:"+1 415 555 0192",stage:"Active",value:12400,lastContact:"2026-04-18",nextFollowUp:"2026-04-28",tags:["Design","Retainer"],color:"#e8a87c",notes:[{id:1,date:"2026-04-18",text:"Discussed Q2 brand refresh. She loves the moodboard direction."},{id:2,date:"2026-04-10",text:"Intro call went well. Budget around $12k."}],health:92},
+  {id:2,name:"Marcus Webb",company:"Northline Realty",role:"Managing Partner",email:"m.webb@northline.com",phone:"+1 312 555 0847",stage:"Proposal",value:8500,lastContact:"2026-04-14",nextFollowUp:"2026-04-25",tags:["Real Estate"],color:"#7ec8c8",notes:[{id:1,date:"2026-04-14",text:"Sent proposal. Awaiting feedback."}],health:65},
+  {id:3,name:"Priya Nair",company:"Verdant Foods",role:"Head of Marketing",email:"priya.nair@verdant.com",phone:"+1 213 555 0334",stage:"Negotiation",value:21000,lastContact:"2026-04-20",nextFollowUp:"2026-04-26",tags:["CPG","High Value"],color:"#a8d5a2",notes:[{id:1,date:"2026-04-20",text:"Counter-offer received. She wants 6-month retainer at $3,500/mo."}],health:78},
+  {id:4,name:"Tom Okafor",company:"Kira Legal",role:"Partner",email:"tokafor@kiralegal.com",phone:"+1 617 555 0561",stage:"Lead",value:4200,lastContact:"2026-03-30",nextFollowUp:"2026-04-27",tags:["Legal"],color:"#c4a8d4",notes:[],health:40},
+  {id:5,name:"Elena Vasquez",company:"Dune Hospitality",role:"CEO",email:"elena@dunehospitality.com",phone:"+1 702 555 0228",stage:"Closed Won",value:35000,lastContact:"2026-04-22",nextFollowUp:"2026-05-10",tags:["VIP"],color:"#f4a261",notes:[{id:1,date:"2026-04-22",text:"Project kicked off!"}],health:97},
+];
 
-    // ── Constants ────────────────────────────────────────────────────────────
-    const STAGES = ["Lead", "Proposal", "Negotiation", "Active", "Closed Won", "Churned"];
-    const STAGE_COLORS = {
-      Lead: "#c4a8d4", Proposal: "#7ec8c8", Negotiation: "#f4c97a",
-      Active: "#a8d5a2", "Closed Won": "#5ba85b", Churned: "#c4c4c4",
-    };
-    const AVATAR_COLORS = ["#e8a87c","#7ec8c8","#a8d5a2","#c4a8d4","#f4c97a","#f4a261","#87b4e8","#e887b4"];
+// ── State ───────────────────────────────────────────────────────────────────
+let state = {
+  contacts: JSON.parse(localStorage.getItem('relatio-contacts') || 'null') || SEED,
+  settings: JSON.parse(localStorage.getItem('relatio-settings') || '{}'),
+  view: 'dashboard',
+  selectedId: null,
+  chatHistory: [],
+};
 
-    const SEED_CONTACTS = [
-      { id:1, name:"Sarah Chen", company:"Bloom Studio", role:"Creative Director", email:"sarah@bloomstudio.co", phone:"+1 415 555 0192", stage:"Active", value:12400, lastContact:"2026-04-18", nextFollowUp:"2026-04-28", tags:["Design","Retainer"], avatar:"SC", color:"#e8a87c", notes:[{id:1,date:"2026-04-18",text:"Discussed Q2 brand refresh. She loves the moodboard direction."},{id:2,date:"2026-04-10",text:"Intro call went well. Budget around $12k."}], health:92 },
-      { id:2, name:"Marcus Webb", company:"Northline Realty", role:"Managing Partner", email:"m.webb@northline.com", phone:"+1 312 555 0847", stage:"Proposal", value:8500, lastContact:"2026-04-14", nextFollowUp:"2026-04-25", tags:["Real Estate","New"], avatar:"MW", color:"#7ec8c8", notes:[{id:1,date:"2026-04-14",text:"Sent proposal. Awaiting feedback."}], health:65 },
-      { id:3, name:"Priya Nair", company:"Verdant Foods", role:"Head of Marketing", email:"priya.nair@verdant.com", phone:"+1 213 555 0334", stage:"Negotiation", value:21000, lastContact:"2026-04-20", nextFollowUp:"2026-04-26", tags:["CPG","High Value"], avatar:"PN", color:"#a8d5a2", notes:[{id:1,date:"2026-04-20",text:"Counter-offer received. She wants 6-month retainer at $3,500/mo."}], health:78 },
-      { id:4, name:"Tom Okafor", company:"Kira Legal", role:"Partner", email:"tokafor@kiralegal.com", phone:"+1 617 555 0561", stage:"Lead", value:4200, lastContact:"2026-03-30", nextFollowUp:"2026-04-27", tags:["Legal","Warm"], avatar:"TO", color:"#c4a8d4", notes:[], health:40 },
-      { id:5, name:"Elena Vasquez", company:"Dune Hospitality", role:"CEO", email:"elena@dunehospitality.com", phone:"+1 702 555 0228", stage:"Closed Won", value:35000, lastContact:"2026-04-22", nextFollowUp:"2026-05-10", tags:["Hospitality","VIP"], avatar:"EV", color:"#f4a261", notes:[{id:1,date:"2026-04-22",text:"Project kicked off!"}], health:97 },
-    ];
+function save() {
+  localStorage.setItem('relatio-contacts', JSON.stringify(state.contacts));
+  localStorage.setItem('relatio-settings', JSON.stringify(state.settings));
+}
 
-    // ── Storage ──────────────────────────────────────────────────────────────
-    const STORAGE_KEY = 'relatio-crm-data';
-    function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
-      } catch { return null; }
-    }
-    function saveData(contacts, settings) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ contacts, settings, savedAt: new Date().toISOString() }));
-      } catch(e) { console.error('Save failed:', e); }
-    }
+// ── Helpers ─────────────────────────────────────────────────────────────────
+const daysAgo = d => Math.floor((new Date() - new Date(d)) / 86400000);
+const daysUntil = d => Math.ceil((new Date(d) - new Date()) / 86400000);
+const fmt = n => '$' + Number(n).toLocaleString();
+const fmtDate = s => new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const initials = n => n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const getContact = id => state.contacts.find(c => c.id === id);
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    const daysAgo = (d) => Math.floor((new Date() - new Date(d)) / 86400000);
-    const daysUntil = (d) => Math.ceil((new Date(d) - new Date()) / 86400000);
-    const fmt = (n) => '$' + Number(n).toLocaleString();
-    const fmtDate = (s) => new Date(s).toLocaleDateString('en-US', { month:'short', day:'numeric' });
-    const initials = (name) => name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+function avatar(c, size=40) {
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${c.color}22;border:2px solid ${c.color}55;font-size:${size*.34}px;color:${c.color}">${initials(c.name)}</div>`;
+}
+function healthBar(v) {
+  const col = v>=80?'#5ba85b':v>=55?'#f4c97a':'#e07070';
+  return `<div style="display:flex;align-items:center;gap:8px"><div class="health-track"><div class="health-fill" style="width:${v}%;background:${col}"></div></div><span style="font-size:11px;color:${col};font-weight:700;min-width:28px">${v}%</span></div>`;
+}
+function stagePill(stage) {
+  return `<span class="pill" style="background:${STAGE_COLORS[stage]}22;color:${STAGE_COLORS[stage]}">${stage}</span>`;
+}
 
-    // ── AI Call ──────────────────────────────────────────────────────────────
-    async function callClaude(messages, system, apiKey) {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system, messages }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      return data.content.map(b => b.text || '').join('');
-    }
+// ── Navigation ───────────────────────────────────────────────────────────────
+function setView(v) {
+  state.view = v;
+  render();
+}
 
-    // ── Sub-components ───────────────────────────────────────────────────────
-    function HealthBar({ value }) {
-      const color = value >= 80 ? '#5ba85b' : value >= 55 ? '#f4c97a' : '#e07070';
-      return (
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <div style={{ flex:1, height:4, background:'#2a2a2a', borderRadius:2 }}>
-            <div style={{ width:`${value}%`, height:'100%', background:color, borderRadius:2, transition:'width 0.5s ease' }} />
-          </div>
-          <span style={{ fontSize:11, color, fontWeight:700, minWidth:28 }}>{value}%</span>
+function buildNav() {
+  const navs = [['dashboard','Dashboard'],['pipeline','Pipeline'],['contacts','Contacts'],['ai','AI Chat']];
+  document.getElementById('desktopNav').innerHTML = navs.map(([v,l]) =>
+    `<button class="nav-btn" onclick="setView('${v}')" style="background:${state.view===v?'#1e1e1e':'transparent'};color:${state.view===v?'#e8e8e8':'#666'}">${l}</button>`
+  ).join('');
+  navs.forEach(([v]) => {
+    const el = document.getElementById('mnav-'+v);
+    if(el) el.style.color = state.view===v?'#e8e8e8':'#555';
+  });
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render() {
+  buildNav();
+  const main = document.getElementById('main');
+  if(state.view==='dashboard') main.innerHTML = renderDashboard();
+  else if(state.view==='pipeline') main.innerHTML = renderPipeline();
+  else if(state.view==='contacts') main.innerHTML = renderContacts();
+  else if(state.view==='ai') { main.innerHTML = renderAI(); scrollChatBottom(); }
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const cs = state.contacts;
+  const pipeline = cs.filter(c=>c.stage!=='Churned'&&c.stage!=='Closed Won');
+  const totalPipeline = pipeline.reduce((s,c)=>s+c.value,0);
+  const overdue = cs.filter(c=>daysUntil(c.nextFollowUp)<=0&&c.stage!=='Churned'&&c.stage!=='Closed Won');
+  const closed = cs.filter(c=>c.stage==='Closed Won').reduce((s,c)=>s+c.value,0);
+  const upcoming = cs.filter(c=>daysUntil(c.nextFollowUp)>0&&daysUntil(c.nextFollowUp)<=7&&c.stage!=='Churned');
+
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div><div style="font-size:22px;font-weight:700">Good morning 👋</div><div style="font-size:13px;color:#555;margin-top:2px">Here's what needs your attention today</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" onclick="openChangeRequest()" style="font-size:12px">✦ Request Change</button>
+      <button class="btn-primary hide-mobile" onclick="openAddContact()">+ Add Contact</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px">
+    ${[
+      ['Pipeline',fmt(totalPipeline),`${pipeline.length} active`,'#e8e8e8'],
+      ['Overdue',overdue.length,'need attention',overdue.length>0?'#e07070':'#e8e8e8'],
+      ['This Week',upcoming.length,'upcoming','#e8e8e8'],
+      ['Closed Won',fmt(closed),'total','#5ba85b'],
+    ].map(([l,v,s,col])=>`<div class="card" style="margin-bottom:0"><span class="label">${l}</span><div style="font-size:24px;font-weight:700;color:${col};line-height:1">${v}</div><div style="font-size:12px;color:#555;margin-top:4px">${s}</div></div>`).join('')}
+  </div>
+  ${overdue.length>0?`<div class="card" style="border-color:#3a1a1a;background:#130d0d">
+    <span class="label" style="color:#e07070">⚠ Overdue Follow-ups</span>
+    ${overdue.map(c=>`<div class="row" onclick="openContact(${c.id})">${avatar(c,34)}<div style="flex:1"><div style="font-weight:600;font-size:14px">${c.name}</div><div style="font-size:12px;color:#555">${c.company}</div></div><span style="font-size:12px;color:#e07070">${Math.abs(daysUntil(c.nextFollowUp))}d overdue</span>${stagePill(c.stage)}</div>`).join('')}
+  </div>`:''}
+  <div class="card">
+    <span class="label" style="margin-bottom:14px">All Clients</span>
+    ${cs.length===0?'<div style="color:#444;text-align:center;padding:24px">No contacts yet. Add your first client!</div>':''}
+    ${cs.map(c=>`<div class="row" onclick="openContact(${c.id})">${avatar(c,34)}<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">${c.name}</div><div style="font-size:12px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.company} · ${c.role}</div></div><span style="font-size:13px;font-weight:600;color:#aaa">${fmt(c.value)}</span>${stagePill(c.stage)}<span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#444'};min-width:44px;text-align:right">${daysUntil(c.nextFollowUp)<=0?'Overdue':daysUntil(c.nextFollowUp)+'d'}</span></div>`).join('')}
+  </div>`;
+}
+
+// ── Pipeline ─────────────────────────────────────────────────────────────────
+function renderPipeline() {
+  return `<div style="font-size:22px;font-weight:700;margin-bottom:20px">Pipeline</div>
+  <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:16px">
+    ${STAGES.map(stage=>{
+      const sc = state.contacts.filter(c=>c.stage===stage);
+      const total = sc.reduce((s,c)=>s+c.value,0);
+      return `<div style="min-width:190px;flex:1;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:7px;height:7px;border-radius:50%;background:${STAGE_COLORS[stage]}"></div><span style="font-size:12px;font-weight:700;color:#aaa">${stage}</span></div>
+          <span style="font-size:11px;color:#555">${fmt(total)}</span>
         </div>
-      );
-    }
+        ${sc.length===0?'<div style="font-size:12px;color:#2a2a2a;text-align:center;padding:16px 0">Empty</div>':''}
+        ${sc.map(c=>`<div onclick="openContact(${c.id})" style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">${avatar(c,28)}<div><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#555">${c.company}</div></div></div>
+          ${healthBar(c.health)}
+          <div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:12px;font-weight:700">${fmt(c.value)}</span><span style="font-size:11px;color:${daysUntil(c.nextFollowUp)<=0?'#e07070':'#555'}">${daysUntil(c.nextFollowUp)<=0?'Overdue':fmtDate(c.nextFollowUp)}</span></div>
+        </div>`).join('')}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
 
-    function Avatar({ initials, color, size=40 }) {
-      return (
-        <div style={{ width:size, height:size, borderRadius:'50%', background:color+'22', border:`2px solid ${color}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:size*0.34, fontWeight:700, color, fontFamily:"'DM Mono',monospace", flexShrink:0 }}>
-          {initials}
+// ── Contacts ─────────────────────────────────────────────────────────────────
+function renderContacts() {
+  const c = getContact(state.selectedId);
+  if(!c) return `<div style="color:#555;text-align:center;padding:60px"><div style="font-size:40px;margin-bottom:12px">👥</div>Select a contact from the Dashboard</div>`;
+  return `
+  <button class="btn-secondary" onclick="setView('dashboard')" style="margin-bottom:16px;font-size:12px">← Back</button>
+  <div style="display:flex;gap:20px;flex-wrap:wrap">
+    <div style="flex:1;min-width:280px">
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          ${avatar(c,52)}
+          <div style="flex:1">
+            <div style="font-size:20px;font-weight:700">${c.name}</div>
+            <div style="font-size:13px;color:#666;margin-bottom:8px">${c.role} · ${c.company}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${c.tags.map(t=>`<span style="padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;background:#1e1e1e;color:#888;border:1px solid #2e2e2e;text-transform:uppercase">${t}</span>`).join('')}</div>
+            ${healthBar(c.health)}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <select onchange="updateStage(${c.id},this.value)" style="background:#0d0d0d;border:1px solid #2e2e2e;border-radius:6px;padding:7px 10px;color:#e8e8e8;font-size:12px;outline:none">
+              ${STAGES.map(s=>`<option value="${s}" ${s===c.stage?'selected':''}>${s}</option>`).join('')}
+            </select>
+            <button class="btn-secondary" onclick="deleteContact(${c.id})" style="font-size:11px;color:#e07070;border-color:#3a1a1a">Delete</button>
+          </div>
         </div>
-      );
-    }
-
-    function Tag({ label, onRemove }) {
-      return (
-        <span style={{ display:'inline-flex', alignItems:'center', gap:4, padding:'2px 8px', borderRadius:3, fontSize:10, fontWeight:600, background:'#1e1e1e', color:'#888', border:'1px solid #2e2e2e', letterSpacing:'0.04em', textTransform:'uppercase' }}>
-          {label}
-          {onRemove && <span onClick={onRemove} style={{ cursor:'pointer', color:'#555', fontSize:12 }}>×</span>}
-        </span>
-      );
-    }
-
-    function Spinner() {
-      return <span style={{ display:'inline-block', width:14, height:14, border:'2px solid #333', borderTopColor:'#888', borderRadius:'50%', animation:'spin 0.7s linear infinite' }} />;
-    }
-
-    // ── Main App ─────────────────────────────────────────────────────────────
-    function App() {
-      const stored = loadData();
-      const [contacts, setContacts] = useState(stored?.contacts || SEED_CONTACTS);
-      const [settings, setSettings] = useState(stored?.settings || { apiKey:'', companyName:'My Company', ownerName:'' });
-      const [view, setView] = useState('dashboard');
-      const [selected, setSelected] = useState(null);
-      const [aiMode, setAiMode] = useState('insights');
-      const [aiLoading, setAiLoading] = useState(false);
-      const [aiOutput, setAiOutput] = useState('');
-      const [chatHistory, setChatHistory] = useState([]);
-      const [chatInput, setChatInput] = useState('');
-      const [newNote, setNewNote] = useState('');
-      const [addingContact, setAddingContact] = useState(false);
-      const [showSettings, setShowSettings] = useState(false);
-      const [showChangeRequest, setShowChangeRequest] = useState(false);
-      const [newContact, setNewContact] = useState({ name:'', company:'', role:'', email:'', phone:'', stage:'Lead', value:'', tags:'' });
-      const [saveStatus, setSaveStatus] = useState('');
-      const [error, setError] = useState('');
-      const chatEndRef = useRef(null);
-
-      // Auto-save to localStorage
-      useEffect(() => {
-        saveData(contacts, settings);
-      }, [contacts, settings]);
-
-      useEffect(() => {
-        if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior:'smooth' });
-      }, [chatHistory]);
-
-      // Show settings on first load if no API key
-      useEffect(() => {
-        if (!settings.apiKey) setShowSettings(true);
-      }, []);
-
-      const apiKey = settings.apiKey;
-
-      // Stats
-      const pipeline = contacts.filter(c => c.stage !== 'Churned' && c.stage !== 'Closed Won');
-      const totalPipeline = pipeline.reduce((s,c) => s + c.value, 0);
-      const overdue = contacts.filter(c => daysUntil(c.nextFollowUp) <= 0 && c.stage !== 'Churned' && c.stage !== 'Closed Won');
-      const upcoming = contacts.filter(c => daysUntil(c.nextFollowUp) > 0 && daysUntil(c.nextFollowUp) <= 7 && c.stage !== 'Churned');
-
-      function updateContact(id, updates) {
-        setContacts(cs => cs.map(c => c.id === id ? { ...c, ...updates } : c));
-        if (selected?.id === id) setSelected(s => ({ ...s, ...updates }));
-      }
-
-      function addNote() {
-        if (!newNote.trim() || !selected) return;
-        const note = { id: Date.now(), date: new Date().toISOString().split('T')[0], text: newNote };
-        updateContact(selected.id, {
-          notes: [note, ...(contacts.find(c=>c.id===selected.id)?.notes || [])],
-          lastContact: note.date
-        });
-        setNewNote('');
-      }
-
-      function saveNewContact() {
-        if (!newContact.name.trim()) return;
-        const tagArr = newContact.tags ? newContact.tags.split(',').map(t=>t.trim()).filter(Boolean) : [];
-        const color = AVATAR_COLORS[contacts.length % AVATAR_COLORS.length];
-        const c = {
-          ...newContact,
-          id: Date.now(),
-          value: parseInt(newContact.value) || 0,
-          avatar: initials(newContact.name),
-          color,
-          lastContact: new Date().toISOString().split('T')[0],
-          nextFollowUp: new Date(Date.now() + 7*86400000).toISOString().split('T')[0],
-          tags: tagArr,
-          notes: [],
-          health: 50,
-        };
-        setContacts(cs => [c, ...cs]);
-        setAddingContact(false);
-        setNewContact({ name:'', company:'', role:'', email:'', phone:'', stage:'Lead', value:'', tags:'' });
-      }
-
-      function deleteContact(id) {
-        if (!window.confirm('Delete this contact?')) return;
-        setContacts(cs => cs.filter(c => c.id !== id));
-        setSelected(null);
-        setView('dashboard');
-      }
-
-      // ── AI Actions ─────────────────────────────────────────────────────────
-      async function runAI(type, contact) {
-        if (!apiKey) { setShowSettings(true); return; }
-        setAiLoading(true); setAiOutput(''); setError('');
-        const sys = `You are a smart CRM assistant for ${settings.companyName || 'a small business'}${settings.ownerName ? `, working with ${settings.ownerName}` : ''}. Be concise, warm, and actionable.`;
-        const prompts = {
-          insights: `Analyze this client and give 3-4 sharp insights + next best actions:\nName: ${contact.name} | Company: ${contact.company} | Role: ${contact.role}\nStage: ${contact.stage} | Deal Value: $${contact.value} | Health: ${contact.health}%\nLast Contact: ${daysAgo(contact.lastContact)} days ago | Next Follow-up: ${fmtDate(contact.nextFollowUp)}\nNotes: ${contact.notes.map(n=>n.text).join(' | ') || 'None'}\nTags: ${contact.tags.join(', ')}`,
-          email: `Draft a warm, professional follow-up email to ${contact.name} at ${contact.company}.\nContext: Stage is ${contact.stage}. Deal value $${contact.value}. Last contacted ${daysAgo(contact.lastContact)} days ago.\nLatest note: ${contact.notes[0]?.text || 'No recent notes.'}\nGoal: Re-engage, build relationship, move deal forward. Keep it under 130 words. Sign off as "${settings.ownerName || 'The Team'} from ${settings.companyName || 'us'}".`,
-          engage: `Suggest 3 creative, genuine ways to stay top-of-mind with ${contact.name} (${contact.role} at ${contact.company}).\nIndustry/tags: ${contact.tags.join(', ')}. Health: ${contact.health}%. Stage: ${contact.stage}.\nBe personal and thoughtful, not spammy.`,
-        };
-        try {
-          const out = await callClaude([{ role:'user', content:prompts[type] }], sys, apiKey);
-          setAiOutput(out);
-        } catch(e) { setError(e.message); }
-        setAiLoading(false);
-      }
-
-      async function sendChat() {
-        if (!chatInput.trim()) return;
-        if (!apiKey) { setShowSettings(true); return; }
-        const userMsg = { role:'user', content:chatInput };
-        const history = [...chatHistory, userMsg];
-        setChatHistory(history); setChatInput(''); setAiLoading(true); setError('');
-        const sys = `You are a CRM assistant for ${settings.companyName || 'a small business'}. Contacts:\n${contacts.map(c=>`${c.name} (${c.company}, ${c.stage}, $${c.value}, health ${c.health}%, last contact ${daysAgo(c.lastContact)}d ago)`).join('\n')}\nBe concise and practical.`;
-        try {
-          const out = await callClaude(history, sys, apiKey);
-          setChatHistory([...history, { role:'assistant', content:out }]);
-        } catch(e) { setError(e.message); }
-        setAiLoading(false);
-      }
-
-      async function sendChangeRequest(request) {
-        if (!apiKey) { setShowSettings(true); return; }
-        setAiLoading(true); setError('');
-        const sys = `You are a product manager and developer assistant for Relatio CRM — a personal CRM app for small businesses. When the user requests a feature change or improvement, respond with:\n1. A confirmation that you understand the request\n2. The exact code changes or steps needed to implement it in the index.html file\n3. Any caveats or alternative approaches\nBe specific and actionable.`;
-        try {
-          const out = await callClaude([{ role:'user', content:`Feature request for Relatio CRM:\n\n${request}\n\nPlease describe exactly what code changes are needed in index.html.` }], sys, apiKey);
-          return out;
-        } catch(e) { setError(e.message); return null; }
-        finally { setAiLoading(false); }
-      }
-
-      // ── Styles ──────────────────────────────────────────────────────────────
-      const S = {
-        card: { background:'#111', border:'1px solid #1e1e1e', borderRadius:10, padding:20, marginBottom:16 },
-        label: { fontSize:11, fontWeight:600, color:'#555', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6, display:'block' },
-        input: { background:'#0d0d0d', border:'1px solid #2e2e2e', borderRadius:6, padding:'9px 12px', color:'#e8e8e8', fontSize:13, width:'100%', outline:'none' },
-        btn: (p) => ({ padding:'8px 16px', borderRadius:6, border: p ? 'none' : '1px solid #2e2e2e', background: p ? '#e8e8e8' : 'transparent', color: p ? '#0d0d0d' : '#aaa', cursor:'pointer', fontSize:13, fontWeight:600 }),
-        navBtn: (a) => ({ padding:'6px 14px', borderRadius:6, border:'none', cursor:'pointer', fontSize:13, fontWeight:500, background: a ? '#1e1e1e' : 'transparent', color: a ? '#e8e8e8' : '#666' }),
-        aiBtn: (a) => ({ padding:'7px 14px', borderRadius:6, border:`1px solid ${a?'#444':'#1e1e1e'}`, background: a ? '#1e1e1e' : 'transparent', color: a ? '#e8e8e8' : '#555', cursor:'pointer', fontSize:12, fontWeight:600 }),
-        row: (sel) => ({ display:'flex', alignItems:'center', gap:14, padding:'12px 14px', borderRadius:8, cursor:'pointer', marginBottom:4, background: sel ? '#181818' : 'transparent', border: sel ? '1px solid #2e2e2e' : '1px solid transparent' }),
-        stagePill: (stage) => ({ padding:'3px 10px', borderRadius:4, fontSize:11, fontWeight:700, background: STAGE_COLORS[stage]+'22', color: STAGE_COLORS[stage] }),
-      };
-
-      // ── Current contact (live from contacts array) ──────────────────────────
-      const liveContact = selected ? contacts.find(c => c.id === selected.id) : null;
-
-      // ── Views ────────────────────────────────────────────────────────────────
-
-      function Dashboard() {
-        return (
-          <div>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
-              <div>
-                <div style={{ fontSize:22, fontWeight:700 }}>Good morning 👋</div>
-                <div style={{ fontSize:13, color:'#555', marginTop:2 }}>Here's what needs your attention today</div>
-              </div>
-              <div style={{ display:'flex', gap:8 }}>
-                <button style={S.btn(false)} onClick={() => setShowChangeRequest(true)}>✦ Request Change</button>
-                <button className="header-add-btn" style={S.btn(true)} onClick={() => setAddingContact(true)}>+ Add Contact</button>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:12, marginBottom:20 }}>
-              {[
-                { label:'Pipeline', val:fmt(totalPipeline), sub:`${pipeline.length} active` },
-                { label:'Overdue', val:overdue.length, sub:'follow-ups', alert:overdue.length>0 },
-                { label:'This Week', val:upcoming.length, sub:'upcoming' },
-                { label:'Closed', val:fmt(contacts.filter(c=>c.stage==='Closed Won').reduce((s,c)=>s+c.value,0)), sub:'won' },
-              ].map((st,i) => (
-                <div key={i} style={{ ...S.card, marginBottom:0, borderColor: st.alert ? '#5b2a2a' : '#1e1e1e' }}>
-                  <div style={{ ...S.label, marginBottom:6 }}>{st.label}</div>
-                  <div style={{ fontSize:24, fontWeight:700, color: st.alert ? '#e07070' : '#e8e8e8', lineHeight:1 }}>{st.val}</div>
-                  <div style={{ fontSize:12, color:'#555', marginTop:4 }}>{st.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Overdue */}
-            {overdue.length > 0 && (
-              <div style={{ ...S.card, borderColor:'#3a1a1a', background:'#130d0d' }}>
-                <div style={{ ...S.label, color:'#e07070', marginBottom:12 }}>⚠ Overdue Follow-ups</div>
-                {overdue.map(c => (
-                  <div key={c.id} style={S.row(false)} onClick={() => { setSelected(c); setView('contact'); }}>
-                    <Avatar initials={c.avatar} color={c.color} size={36} />
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontWeight:600, fontSize:14 }}>{c.name}</div>
-                      <div style={{ fontSize:12, color:'#555' }}>{c.company}</div>
-                    </div>
-                    <span style={{ fontSize:12, color:'#e07070' }}>{Math.abs(daysUntil(c.nextFollowUp))}d overdue</span>
-                    <span style={S.stagePill(c.stage)}>{c.stage}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* All contacts */}
-            <div style={S.card}>
-              <div style={{ ...S.label, marginBottom:14 }}>All Clients</div>
-              {contacts.map(c => (
-                <div key={c.id} style={S.row(selected?.id===c.id)} onClick={() => { setSelected(c); setView('contact'); }}>
-                  <Avatar initials={c.avatar} color={c.color} size={36} />
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontWeight:600, fontSize:14 }}>{c.name}</div>
-                    <div style={{ fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.company} · {c.role}</div>
-                  </div>
-                  <div style={{ width:90, display:'none' }} className="health-col"><HealthBar value={c.health} /></div>
-                  <span style={{ fontSize:13, fontWeight:600, color:'#aaa' }}>{fmt(c.value)}</span>
-                  <span style={S.stagePill(c.stage)}>{c.stage}</span>
-                  <span style={{ fontSize:11, color: daysUntil(c.nextFollowUp)<=0?'#e07070':'#444', minWidth:52, textAlign:'right' }}>
-                    {daysUntil(c.nextFollowUp)<=0 ? 'Overdue' : `${daysUntil(c.nextFollowUp)}d`}
-                  </span>
-                </div>
-              ))}
-              {contacts.length === 0 && <div style={{ color:'#444', fontSize:13, textAlign:'center', padding:24 }}>No contacts yet. Add your first client!</div>}
-            </div>
-          </div>
-        );
-      }
-
-      function Pipeline() {
-        return (
-          <div>
-            <div style={{ fontSize:22, fontWeight:700, marginBottom:20 }}>Pipeline</div>
-            <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:16 }}>
-              {STAGES.map(stage => {
-                const sc = contacts.filter(c => c.stage===stage);
-                const total = sc.reduce((s,c) => s+c.value, 0);
-                return (
-                  <div key={stage} style={{ minWidth:200, flex:1, background:'#111', border:'1px solid #1e1e1e', borderRadius:10, padding:16 }}>
-                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                        <div style={{ width:7, height:7, borderRadius:'50%', background:STAGE_COLORS[stage] }} />
-                        <span style={{ fontSize:12, fontWeight:700, color:'#aaa' }}>{stage}</span>
-                      </div>
-                      <span style={{ fontSize:11, color:'#555' }}>{fmt(total)}</span>
-                    </div>
-                    {sc.length === 0 && <div style={{ fontSize:12, color:'#2a2a2a', textAlign:'center', padding:'16px 0' }}>Empty</div>}
-                    {sc.map(c => (
-                      <div key={c.id} onClick={() => { setSelected(c); setView('contact'); }}
-                        style={{ background:'#0d0d0d', border:'1px solid #1e1e1e', borderRadius:8, padding:12, marginBottom:8, cursor:'pointer' }}>
-                        <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:8 }}>
-                          <Avatar initials={c.avatar} color={c.color} size={28} />
-                          <div>
-                            <div style={{ fontWeight:600, fontSize:13 }}>{c.name}</div>
-                            <div style={{ fontSize:11, color:'#555' }}>{c.company}</div>
-                          </div>
-                        </div>
-                        <HealthBar value={c.health} />
-                        <div style={{ display:'flex', justifyContent:'space-between', marginTop:8 }}>
-                          <span style={{ fontSize:12, fontWeight:700 }}>{fmt(c.value)}</span>
-                          <span style={{ fontSize:11, color: daysUntil(c.nextFollowUp)<=0?'#e07070':'#555' }}>
-                            {daysUntil(c.nextFollowUp)<=0 ? 'Overdue' : fmtDate(c.nextFollowUp)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      }
-
-      function ContactDetail() {
-        const c = liveContact;
-        if (!c) return (
-          <div style={{ color:'#555', textAlign:'center', padding:60 }}>
-            <div style={{ fontSize:32, marginBottom:12 }}>👥</div>
-            Select a contact from the Dashboard or Pipeline
-          </div>
-        );
-
-        return (
-          <div style={{ display:'flex', gap:20, flexWrap:'wrap' }}>
-            {/* Left */}
-            <div style={{ flex:1, minWidth:280 }}>
-              <div style={S.card}>
-                <div style={{ display:'flex', gap:14, alignItems:'flex-start' }}>
-                  <Avatar initials={c.avatar} color={c.color} size={52} />
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:20, fontWeight:700 }}>{c.name}</div>
-                    <div style={{ fontSize:13, color:'#666', marginBottom:8 }}>{c.role} · {c.company}</div>
-                    <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:10 }}>
-                      {c.tags.map(t => <Tag key={t} label={t} />)}
-                    </div>
-                    <HealthBar value={c.health} />
-                  </div>
-                  <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                    <select value={c.stage} onChange={e => updateContact(c.id, { stage:e.target.value })} style={{ ...S.input, width:130, fontSize:12 }}>
-                      {STAGES.map(st => <option key={st}>{st}</option>)}
-                    </select>
-                    <button style={{ ...S.btn(false), fontSize:12, color:'#e07070', borderColor:'#3a1a1a' }} onClick={() => deleteContact(c.id)}>Delete</button>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ ...S.card, display:'flex', gap:20, flexWrap:'wrap' }}>
-                {[['Email',c.email],['Phone',c.phone],['Deal Value',fmt(c.value)],['Last Contact',`${fmtDate(c.lastContact)} (${daysAgo(c.lastContact)}d ago)`],['Follow-up',fmtDate(c.nextFollowUp)]].map(([l,v]) => (
-                  <div key={l}>
-                    <span style={S.label}>{l}</span>
-                    <div style={{ fontSize:13, color:'#bbb' }}>{v}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={S.card}>
-                <span style={S.label}>Notes & Activity</span>
-                <div style={{ display:'flex', gap:8, marginBottom:16 }}>
-                  <input value={newNote} onChange={e=>setNewNote(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addNote()} placeholder="Log a call, meeting, or update…" style={S.input} />
-                  <button style={S.btn(true)} onClick={addNote}>Add</button>
-                </div>
-                {c.notes.length===0 && <div style={{ color:'#444', fontSize:13 }}>No notes yet. Log your first interaction!</div>}
-                {c.notes.map(n => (
-                  <div key={n.id} style={{ borderLeft:'2px solid #2e2e2e', paddingLeft:14, marginBottom:14 }}>
-                    <div style={{ fontSize:11, color:'#555', marginBottom:3 }}>{fmtDate(n.date)}</div>
-                    <div style={{ fontSize:13, color:'#ccc', lineHeight:1.65 }}>{n.text}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: AI */}
-            <div style={{ width:320, flexShrink:0 }}>
-              <div style={S.card}>
-                <span style={{ ...S.label, marginBottom:12 }}>AI Assistant</span>
-                {!apiKey && (
-                  <div style={{ background:'#1a1200', border:'1px solid #3a2a00', borderRadius:8, padding:12, marginBottom:12, fontSize:12, color:'#f4c97a' }}>
-                    Add your Anthropic API key in <button onClick={()=>setShowSettings(true)} style={{ background:'none', border:'none', color:'#f4c97a', textDecoration:'underline', cursor:'pointer', fontSize:12, padding:0 }}>Settings</button> to enable AI features.
-                  </div>
-                )}
-                <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:14 }}>
-                  {[['insights','💡 Insights'],['email','✉ Email'],['engage','🤝 Engage']].map(([m,l]) => (
-                    <button key={m} style={S.aiBtn(aiMode===m)} onClick={() => { setAiMode(m); setAiOutput(''); }}>{l}</button>
-                  ))}
-                </div>
-                <button style={{ ...S.btn(true), width:'100%', marginBottom:14 }}
-                  onClick={() => runAI(aiMode, c)} disabled={aiLoading}>
-                  {aiLoading ? <span style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}><Spinner /> Thinking…</span>
-                    : aiMode==='insights' ? 'Generate Insights' : aiMode==='email' ? 'Draft Email' : 'Get Ideas'}
-                </button>
-                {error && <div style={{ color:'#e07070', fontSize:12, marginBottom:12 }}>Error: {error}</div>}
-                {aiOutput && (
-                  <div style={{ fontSize:13, color:'#ccc', lineHeight:1.7, whiteSpace:'pre-wrap', maxHeight:380, overflowY:'auto' }}>
-                    {aiOutput}
-                    <button onClick={() => navigator.clipboard.writeText(aiOutput)} style={{ ...S.btn(false), fontSize:11, marginTop:12, padding:'5px 12px' }}>Copy</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      function AIChat() {
-        return (
-          <div style={{ display:'flex', flexDirection:'column', height:'calc(100dvh - 120px)' }}>
-            <div style={{ fontSize:22, fontWeight:700, marginBottom:16 }}>CRM Assistant</div>
-            {!apiKey && (
-              <div style={{ background:'#1a1200', border:'1px solid #3a2a00', borderRadius:8, padding:12, marginBottom:12, fontSize:13, color:'#f4c97a' }}>
-                Add your Anthropic API key in <button onClick={()=>setShowSettings(true)} style={{ background:'none', border:'none', color:'#f4c97a', textDecoration:'underline', cursor:'pointer', fontSize:13, padding:0 }}>Settings</button> to chat.
-              </div>
-            )}
-            <div style={{ ...S.card, flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-              <div style={{ flex:1, overflowY:'auto', paddingBottom:8 }}>
-                {chatHistory.length===0 && (
-                  <div style={{ color:'#444', fontSize:13, padding:'16px 0' }}>
-                    <div style={{ marginBottom:12 }}>Ask me anything about your pipeline, clients, or strategy.</div>
-                    <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                      {["Who needs a follow-up this week?", "Which deal is most at risk?", "Draft a re-engagement strategy for my cold leads."].map(q => (
-                        <button key={q} onClick={() => setChatInput(q)} style={{ ...S.aiBtn(false), textAlign:'left', padding:'10px 14px', borderRadius:8 }}>{q}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {chatHistory.map((m,i) => (
-                  <div key={i} style={{ marginBottom:14, display:'flex', flexDirection: m.role==='user'?'row-reverse':'row', gap:8 }}>
-                    <div style={{ maxWidth:'80%', padding:'10px 14px', borderRadius:10, fontSize:13, lineHeight:1.65, background: m.role==='user'?'#1e1e1e':'#141414', border:`1px solid ${m.role==='user'?'#2e2e2e':'#1a1a1a'}`, color:'#d8d8d8', whiteSpace:'pre-wrap' }}>
-                      {m.content}
-                    </div>
-                  </div>
-                ))}
-                {aiLoading && <div style={{ color:'#555', fontSize:13, display:'flex', alignItems:'center', gap:8 }}><Spinner /> Thinking…</div>}
-                <div ref={chatEndRef} />
-              </div>
-              <div style={{ display:'flex', gap:8, paddingTop:12, borderTop:'1px solid #1e1e1e' }}>
-                <input value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&!e.shiftKey&&sendChat()} placeholder="Ask about your pipeline…" style={S.input} />
-                <button style={S.btn(true)} onClick={sendChat}>Send</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // ── Settings Modal ─────────────────────────────────────────────────────
-      function SettingsModal() {
-        const [local, setLocal] = useState({ ...settings });
-        function save() {
-          setSettings(local);
-          setSaveStatus('Saved!');
-          setTimeout(() => { setSaveStatus(''); setShowSettings(false); }, 1200);
-        }
-        return (
-          <div style={{ position:'fixed', inset:0, background:'#000000cc', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:16 }}>
-            <div style={{ background:'#111', border:'1px solid #2e2e2e', borderRadius:14, padding:28, width:'100%', maxWidth:440 }}>
-              <div style={{ fontSize:18, fontWeight:700, marginBottom:6 }}>⚙ Settings</div>
-              <div style={{ fontSize:13, color:'#555', marginBottom:24 }}>Configure your CRM and AI access</div>
-
-              <div style={{ marginBottom:16 }}>
-                <label style={S.label}>Anthropic API Key</label>
-                <input type="password" value={local.apiKey} onChange={e=>setLocal(l=>({...l,apiKey:e.target.value}))} placeholder="sk-ant-…" style={S.input} />
-                <div style={{ fontSize:11, color:'#444', marginTop:4 }}>Get your key at console.anthropic.com — stored locally, never sent anywhere except Anthropic's API</div>
-              </div>
-              <div style={{ marginBottom:16 }}>
-                <label style={S.label}>Your Name</label>
-                <input value={local.ownerName} onChange={e=>setLocal(l=>({...l,ownerName:e.target.value}))} placeholder="e.g. Alex" style={S.input} />
-              </div>
-              <div style={{ marginBottom:24 }}>
-                <label style={S.label}>Company Name</label>
-                <input value={local.companyName} onChange={e=>setLocal(l=>({...l,companyName:e.target.value}))} placeholder="e.g. Bloom Studio" style={S.input} />
-              </div>
-
-              <div style={{ borderTop:'1px solid #1e1e1e', paddingTop:20, marginBottom:20 }}>
-                <div style={{ fontSize:13, fontWeight:600, marginBottom:8 }}>Data</div>
-                <div style={{ fontSize:12, color:'#555', marginBottom:12 }}>All data is saved in your browser's local storage. Export to back it up.</div>
-                <div style={{ display:'flex', gap:8' }}>
-                  <button style={{ ...S.btn(false), fontSize:12 }} onClick={() => {
-                    const data = JSON.stringify({ contacts, settings, exportedAt: new Date().toISOString() }, null, 2);
-                    const blob = new Blob([data], { type:'application/json' });
-                    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                    a.download = 'relatio-crm-backup.json'; a.click();
-                  }}>⬇ Export Backup</button>
-                  <label style={{ ...S.btn(false), fontSize:12, cursor:'pointer' }}>
-                    ⬆ Import
-                    <input type="file" accept=".json" style={{ display:'none' }} onChange={e => {
-                      const file = e.target.files[0]; if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = (ev) => {
-                        try {
-                          const d = JSON.parse(ev.target.result);
-                          if (d.contacts) setContacts(d.contacts);
-                          if (d.settings) setSettings(d.settings);
-                          setSaveStatus('Imported!');
-                          setTimeout(() => setSaveStatus(''), 2000);
-                        } catch { alert('Invalid backup file'); }
-                      };
-                      reader.readAsText(file);
-                    }} />
-                  </label>
-                </div>
-              </div>
-
-              <div style={{ display:'flex', gap:8, justifyContent:'flex-end', alignItems:'center' }}>
-                {saveStatus && <span style={{ fontSize:13, color:'#5ba85b' }}>{saveStatus}</span>}
-                <button style={S.btn(false)} onClick={() => setShowSettings(false)}>Cancel</button>
-                <button style={S.btn(true)} onClick={save}>Save Settings</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // ── Change Request Modal ───────────────────────────────────────────────
-      function ChangeRequestModal() {
-        const [request, setRequest] = useState('');
-        const [response, setResponse] = useState('');
-        const [loading, setLoading] = useState(false);
-        async function submit() {
-          if (!request.trim()) return;
-          setLoading(true); setResponse('');
-          const out = await sendChangeRequest(request);
-          setResponse(out || 'Error getting response');
-          setLoading(false);
-        }
-        return (
-          <div style={{ position:'fixed', inset:0, background:'#000000cc', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:16 }}>
-            <div style={{ background:'#111', border:'1px solid #2e2e2e', borderRadius:14, padding:28, width:'100%', maxWidth:560, maxHeight:'90vh', overflowY:'auto' }}>
-              <div style={{ fontSize:18, fontWeight:700, marginBottom:6 }}>✦ Request a Change</div>
-              <div style={{ fontSize:13, color:'#555', marginBottom:20 }}>Describe any feature, improvement, or change you want. Claude will tell you exactly how to implement it.</div>
-
-              <div style={{ marginBottom:12 }}>
-                <label style={S.label}>What would you like to change or add?</label>
-                <textarea value={request} onChange={e=>setRequest(e.target.value)} placeholder="e.g. Add a birthday field for contacts, show a calendar view, add email open tracking, change the color scheme to light mode…"
-                  style={{ ...S.input, height:100, resize:'vertical', lineHeight:1.6 }} />
-              </div>
-              <button style={{ ...S.btn(true), width:'100%', marginBottom:20 }} onClick={submit} disabled={loading}>
-                {loading ? <span style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}><Spinner />Generating…</span> : 'Get Implementation Guide'}
-              </button>
-
-              {response && (
-                <div style={{ background:'#0d0d0d', border:'1px solid #1e1e1e', borderRadius:8, padding:16, marginBottom:16 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:'#555', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:12 }}>Claude's Response</div>
-                  <div style={{ fontSize:13, color:'#ccc', lineHeight:1.75, whiteSpace:'pre-wrap' }}>{response}</div>
-                  <button onClick={() => navigator.clipboard.writeText(response)} style={{ ...S.btn(false), fontSize:11, marginTop:12, padding:'5px 12px' }}>Copy</button>
-                </div>
-              )}
-
-              <div style={{ background:'#0d0d12', border:'1px solid #1e1e2e', borderRadius:8, padding:14, marginBottom:16 }}>
-                <div style={{ fontSize:11, fontWeight:600, color:'#7ec8c8', letterSpacing:'0.08em', marginBottom:8 }}>HOW TO APPLY CHANGES</div>
-                <div style={{ fontSize:12, color:'#666', lineHeight:1.7 }}>
-                  1. Copy Claude's implementation instructions above<br/>
-                  2. Open your <code style={{ background:'#1e1e1e', padding:'1px 5px', borderRadius:3 }}>index.html</code> file in any text editor<br/>
-                  3. Find the relevant section and apply the changes<br/>
-                  4. Save the file and refresh your browser (or redeploy to Vercel)<br/>
-                  5. Your update is live!
-                </div>
-              </div>
-
-              <div style={{ display:'flex', justifyContent:'flex-end' }}>
-                <button style={S.btn(false)} onClick={() => setShowChangeRequest(false)}>Close</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // ── Add Contact Modal ──────────────────────────────────────────────────
-      function AddContactModal() {
-        return (
-          <div style={{ position:'fixed', inset:0, background:'#000000cc', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:16 }}>
-            <div style={{ background:'#111', border:'1px solid #2e2e2e', borderRadius:14, padding:28, width:'100%', maxWidth:440, maxHeight:'90vh', overflowY:'auto' }}>
-              <div style={{ fontSize:18, fontWeight:700, marginBottom:20 }}>New Contact</div>
-              {[['name','Full Name *'],['company','Company'],['role','Role / Title'],['email','Email'],['phone','Phone'],['value','Deal Value ($)'],['tags','Tags (comma-separated)']].map(([k,l]) => (
-                <div key={k} style={{ marginBottom:12 }}>
-                  <label style={S.label}>{l}</label>
-                  <input value={newContact[k]} onChange={e=>setNewContact(n=>({...n,[k]:e.target.value}))} style={S.input} placeholder={l} />
-                </div>
-              ))}
-              <div style={{ marginBottom:20 }}>
-                <label style={S.label}>Stage</label>
-                <select value={newContact.stage} onChange={e=>setNewContact(n=>({...n,stage:e.target.value}))} style={S.input}>
-                  {STAGES.map(st => <option key={st}>{st}</option>)}
-                </select>
-              </div>
-              <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
-                <button style={S.btn(false)} onClick={() => setAddingContact(false)}>Cancel</button>
-                <button style={S.btn(true)} onClick={saveNewContact}>Save Contact</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // ── Render ─────────────────────────────────────────────────────────────
-      return (
-        <div style={{ display:'flex', flexDirection:'column', height:'100dvh', background:'#0d0d0d' }}>
-          <style>{`
-            @keyframes spin { to { transform: rotate(360deg); } }
-            .mob-nav-btn { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 12px; border:none; background:none; cursor:pointer; }
-          `}</style>
-
-          {/* Header */}
-          <div style={{ background:'#111', borderBottom:'1px solid #1e1e1e', padding:'0 16px', display:'flex', alignItems:'center', justifyContent:'space-between', height:52, flexShrink:0 }}>
-            <div style={{ fontFamily:"'DM Mono',monospace", fontSize:13, fontWeight:700, letterSpacing:'0.08em' }}>RELATIO · CRM</div>
-            <div className="desktop-nav" style={{ display:'flex', gap:4 }}>
-              {[['dashboard','Dashboard'],['pipeline','Pipeline'],['contact','Contacts'],['ai','AI Chat']].map(([v,l]) => (
-                <button key={v} style={S.navBtn(view===v)} onClick={() => setView(v)}>{l}</button>
-              ))}
-            </div>
-            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-              <button className="header-add-btn" style={S.btn(true)} onClick={() => setAddingContact(true)}>+ Add</button>
-              <button style={{ ...S.btn(false), padding:'6px 10px', fontSize:18 }} onClick={() => setShowSettings(true)}>⚙</button>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div style={{ flex:1, overflow:'auto', padding:16 }}>
-            {view==='dashboard' && <Dashboard />}
-            {view==='pipeline' && <Pipeline />}
-            {view==='contact' && <ContactDetail />}
-            {view==='ai' && <AIChat />}
-          </div>
-
-          {/* Mobile Bottom Nav */}
-          <div className="mobile-nav" style={{ background:'#111', borderTop:'1px solid #1e1e1e', display:'flex', justifyContent:'space-around', padding:'6px 0', paddingBottom:'calc(6px + env(safe-area-inset-bottom))', flexShrink:0 }}>
-            {[['dashboard','🏠','Home'],['pipeline','📊','Pipeline'],['contact','👥','Contacts'],['ai','✦','AI']].map(([v,ic,l]) => (
-              <button key={v} className="mob-nav-btn" onClick={() => setView(v)}
-                style={{ color: view===v ? '#e8e8e8' : '#555' }}>
-                <span style={{ fontSize:20 }}>{ic}</span>
-                <span style={{ fontSize:10, fontWeight:600 }}>{l}</span>
-              </button>
-            ))}
-            <button className="mob-nav-btn" onClick={() => setAddingContact(true)} style={{ color:'#e8e8e8' }}>
-              <span style={{ fontSize:20 }}>＋</span>
-              <span style={{ fontSize:10, fontWeight:600 }}>Add</span>
-            </button>
-          </div>
-
-          {/* Modals */}
-          {showSettings && <SettingsModal />}
-          {showChangeRequest && <ChangeRequestModal />}
-          {addingContact && <AddContactModal />}
+      </div>
+      <div class="card" style="display:flex;gap:20px;flex-wrap:wrap">
+        ${[['Email',c.email],['Phone',c.phone||'—'],['Deal Value',fmt(c.value)],['Last Contact',fmtDate(c.lastContact)+' ('+daysAgo(c.lastContact)+'d ago)'],['Follow-up',fmtDate(c.nextFollowUp)]].map(([l,v])=>`<div><span class="label">${l}</span><div style="font-size:13px;color:#bbb">${v}</div></div>`).join('')}
+      </div>
+      <div class="card">
+        <span class="label">Notes & Activity</span>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <input id="noteInput" class="input" placeholder="Log a call, meeting, or update…" onkeydown="if(event.key==='Enter')addNote(${c.id})"/>
+          <button class="btn-primary" onclick="addNote(${c.id})">Add</button>
         </div>
-      );
-    }
+        ${c.notes.length===0?'<div style="color:#444;font-size:13px">No notes yet.</div>':''}
+        ${c.notes.map(n=>`<div style="border-left:2px solid #2e2e2e;padding-left:14px;margin-bottom:14px"><div style="font-size:11px;color:#555;margin-bottom:3px">${fmtDate(n.date)}</div><div style="font-size:13px;color:#ccc;line-height:1.65">${n.text}</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="width:300px;flex-shrink:0">
+      <div class="card">
+        <span class="label" style="margin-bottom:12px">AI Assistant</span>
+        ${!state.settings.apiKey?`<div style="background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;color:#f4c97a">Add your API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:12px;padding:0">Settings</button> to enable AI.</div>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+          <button onclick="setAiMode('insights')" id="ai-btn-insights" class="btn-secondary" style="font-size:12px;padding:7px 12px">💡 Insights</button>
+          <button onclick="setAiMode('email')" id="ai-btn-email" class="btn-secondary" style="font-size:12px;padding:7px 12px">✉ Email</button>
+          <button onclick="setAiMode('engage')" id="ai-btn-engage" class="btn-secondary" style="font-size:12px;padding:7px 12px">🤝 Engage</button>
+        </div>
+        <button class="btn-primary" id="ai-run-btn" onclick="runAI(${c.id})" style="width:100%;margin-bottom:14px">Generate Insights</button>
+        <div id="ai-output" style="font-size:13px;color:#ccc;line-height:1.7;white-space:pre-wrap;max-height:380px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </div>`;
+}
 
-    // ── Mount ──────────────────────────────────────────────────────────────
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+// ── AI Chat ──────────────────────────────────────────────────────────────────
+function renderAI() {
+  const msgs = state.chatHistory;
+  return `
+  <div style="font-size:22px;font-weight:700;margin-bottom:16px">CRM Assistant</div>
+  ${!state.settings.apiKey?`<div style="background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;color:#f4c97a">Add your API key in <button onclick="openSettings()" style="background:none;border:none;color:#f4c97a;text-decoration:underline;cursor:pointer;font-size:13px;padding:0">Settings</button> to chat.</div>`:''}
+  <div class="card" style="display:flex;flex-direction:column;height:calc(100dvh - 220px)">
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding-bottom:8px">
+      ${msgs.length===0?`<div style="color:#444;font-size:13px;padding:16px 0">Ask me anything about your pipeline, clients, or strategy.
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+          ${["Who needs a follow-up this week?","Which deal is most at risk?","Draft a re-engagement strategy for my cold leads."].map(q=>`<button onclick="setChatInput('${q}')" style="background:transparent;border:1px solid #1e1e1e;border-radius:8px;padding:10px 14px;color:#555;cursor:pointer;font-size:12px;text-align:left;font-family:inherit">${q}</button>`).join('')}
+        </div>
+      </div>`:''}
+      ${msgs.map(m=>`<div style="margin-bottom:14px;display:flex;flex-direction:${m.role==='user'?'row-reverse':'row'};gap:8px"><div style="max-width:80%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.65;background:${m.role==='user'?'#1e1e1e':'#141414'};border:1px solid ${m.role==='user'?'#2e2e2e':'#1a1a1a'};color:#d8d8d8;white-space:pre-wrap">${m.content}</div></div>`).join('')}
+      <div id="chat-end"></div>
+    </div>
+    <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid #1e1e1e">
+      <input id="chatInput" class="input" placeholder="Ask about your pipeline…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()"/>
+      <button class="btn-primary" onclick="sendChat()">Send</button>
+    </div>
+  </div>`;
+}
+
+function scrollChatBottom() {
+  setTimeout(()=>{const el=document.getElementById('chat-end');if(el)el.scrollIntoView()},100);
+}
+
+// ── Actions ──────────────────────────────────────────────────────────────────
+let currentAiMode = 'insights';
+function setAiMode(m) {
+  currentAiMode = m;
+  const labels = {insights:'Generate Insights',email:'Draft Email',engage:'Get Ideas'};
+  ['insights','email','engage'].forEach(k=>{
+    const btn=document.getElementById('ai-btn-'+k);
+    if(btn){btn.style.background=k===m?'#1e1e1e':'transparent';btn.style.color=k===m?'#e8e8e8':'#555';btn.style.borderColor=k===m?'#444':'#1e1e1e';}
+  });
+  const rb=document.getElementById('ai-run-btn');
+  if(rb)rb.textContent=labels[m];
+}
+
+function openContact(id) {
+  state.selectedId = id;
+  state.view = 'contacts';
+  render();
+}
+
+function updateStage(id, stage) {
+  state.contacts = state.contacts.map(c=>c.id===id?{...c,stage}:c);
+  save();
+}
+
+function deleteContact(id) {
+  if(!confirm('Delete this contact?')) return;
+  state.contacts = state.contacts.filter(c=>c.id!==id);
+  state.selectedId = null;
+  save();
+  setView('dashboard');
+}
+
+function addNote(id) {
+  const input = document.getElementById('noteInput');
+  if(!input||!input.value.trim()) return;
+  const note = {id:Date.now(),date:new Date().toISOString().split('T')[0],text:input.value.trim()};
+  state.contacts = state.contacts.map(c=>c.id===id?{...c,notes:[note,...c.notes],lastContact:note.date}:c);
+  save();
+  openContact(id);
+}
+
+function setChatInput(q) {
+  const el=document.getElementById('chatInput');
+  if(el)el.value=q;
+}
+
+// ── AI ───────────────────────────────────────────────────────────────────────
+async function callClaude(messages, system) {
+  const key = state.settings.apiKey;
+  if(!key) { openSettings(); return null; }
+  const res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages})
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content.map(b=>b.text||'').join('');
+}
+
+async function runAI(id) {
+  const c = getContact(id);
+  if(!c) return;
+  const out = document.getElementById('ai-output');
+  const btn = document.getElementById('ai-run-btn');
+  if(!out||!btn) return;
+  out.innerHTML = '<span class="spinner"></span> Thinking…';
+  btn.disabled = true;
+  const sys = `You are a CRM assistant for ${state.settings.companyName||'a small business'}. Be concise and actionable.`;
+  const prompts = {
+    insights:`Analyze this client and give 3-4 sharp insights + next best actions:\nName: ${c.name} | Company: ${c.company} | Stage: ${c.stage} | Value: $${c.value} | Health: ${c.health}%\nLast contact: ${daysAgo(c.lastContact)} days ago\nNotes: ${c.notes.map(n=>n.text).join(' | ')||'None'}`,
+    email:`Draft a warm follow-up email to ${c.name} at ${c.company}.\nStage: ${c.stage}. Value: $${c.value}. Last contacted ${daysAgo(c.lastContact)} days ago.\nNote: ${c.notes[0]?.text||'None'}. Under 130 words. Sign off as "${state.settings.ownerName||'The Team'} from ${state.settings.companyName||'us'}".`,
+    engage:`Suggest 3 creative ways to stay top-of-mind with ${c.name} (${c.role} at ${c.company}). Tags: ${c.tags.join(', ')}. Health: ${c.health}%.`,
+  };
+  try {
+    const result = await callClaude([{role:'user',content:prompts[currentAiMode]}], sys);
+    out.innerHTML = result ? result.replace(/\n/g,'<br>') + `<br><button onclick="navigator.clipboard.writeText(\`${result.replace(/`/g,"'")}\`)" class="btn-secondary" style="margin-top:12px;font-size:11px;padding:5px 12px">Copy</button>` : 'No response.';
+  } catch(e) {
+    out.innerHTML = `<span style="color:#e07070">Error: ${e.message}</span>`;
+  }
+  btn.disabled = false;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  if(!input||!input.value.trim()) return;
+  const msg = {role:'user',content:input.value.trim()};
+  state.chatHistory.push(msg);
+  input.value = '';
+  render();
+  const sys = `You are a CRM assistant for ${state.settings.companyName||'a small business'}. Contacts:\n${state.contacts.map(c=>`${c.name} (${c.company}, ${c.stage}, $${c.value}, health ${c.health}%)`).join('\n')}\nBe concise and practical.`;
+  try {
+    const result = await callClaude(state.chatHistory, sys);
+    state.chatHistory.push({role:'assistant',content:result||'No response'});
+  } catch(e) {
+    state.chatHistory.push({role:'assistant',content:'Error: '+e.message});
+  }
+  render();
+}
+
+// ── Modals ───────────────────────────────────────────────────────────────────
+function closeModal() { document.getElementById('modal-container').innerHTML=''; }
+
+function openAddContact() {
+  document.getElementById('modal-container').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px">New Contact</div>
+      ${[['name','Full Name *'],['company','Company'],['role','Role / Title'],['email','Email'],['phone','Phone'],['value','Deal Value ($)'],['tags','Tags (comma-separated)']].map(([k,l])=>`<div style="margin-bottom:12px"><label class="label">${l}</label><input id="nc-${k}" class="input" placeholder="${l}"/></div>`).join('')}
+      <div style="margin-bottom:20px"><label class="label">Stage</label><select id="nc-stage" class="input">${STAGES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewContact()">Save Contact</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveNewContact() {
+  const g = id => document.getElementById('nc-'+id)?.value||'';
+  const name = g('name');
+  if(!name.trim()) return alert('Name is required');
+  const tags = g('tags').split(',').map(t=>t.trim()).filter(Boolean);
+  const c = {
+    id:Date.now(), name, company:g('company'), role:g('role'), email:g('email'), phone:g('phone'),
+    value:parseInt(g('value'))||0, stage:g('stage'), tags,
+    color:COLORS[state.contacts.length%COLORS.length],
+    lastContact:new Date().toISOString().split('T')[0],
+    nextFollowUp:new Date(Date.now()+7*86400000).toISOString().split('T')[0],
+    notes:[], health:50,
+  };
+  state.contacts.unshift(c);
+  save(); closeModal(); render();
+}
+
+function openSettings() {
+  document.getElementById('modal-container').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px">⚙ Settings</div>
+      <div style="font-size:13px;color:#555;margin-bottom:24px">Configure your CRM and AI access</div>
+      <div style="margin-bottom:14px"><label class="label">Anthropic API Key</label><input id="s-key" type="password" class="input" placeholder="sk-ant-…" value="${state.settings.apiKey||''}"/><div style="font-size:11px;color:#444;margin-top:4px">Get it at console.anthropic.com — stored locally only</div></div>
+      <div style="margin-bottom:14px"><label class="label">Your Name</label><input id="s-name" class="input" placeholder="e.g. Alex" value="${state.settings.ownerName||''}"/></div>
+      <div style="margin-bottom:24px"><label class="label">Company Name</label><input id="s-company" class="input" placeholder="e.g. My Company" value="${state.settings.companyName||''}"/></div>
+      <div style="border-top:1px solid #1e1e1e;padding-top:16px;margin-bottom:20px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Data Backup</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-secondary" onclick="exportData()" style="font-size:12px">⬇ Export</button>
+          <label class="btn-secondary" style="font-size:12px;cursor:pointer">⬆ Import<input type="file" accept=".json" onchange="importData(event)" style="display:none"/></label>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveSettings() {
+  state.settings = {
+    apiKey: document.getElementById('s-key')?.value||'',
+    ownerName: document.getElementById('s-name')?.value||'',
+    companyName: document.getElementById('s-company')?.value||'',
+  };
+  save(); closeModal();
+  alert('Settings saved! ✅');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify({contacts:state.contacts,settings:state.settings,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='relatio-backup.json';a.click();
+}
+
+function importData(e) {
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{const d=JSON.parse(ev.target.result);if(d.contacts)state.contacts=d.contacts;if(d.settings)state.settings=d.settings;save();closeModal();render();alert('Imported!');}
+    catch{alert('Invalid file');}
+  };reader.readAsText(file);
+}
+
+function openChangeRequest() {
+  document.getElementById('modal-container').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="max-width:520px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px">✦ Request a Change</div>
+      <div style="font-size:13px;color:#555;margin-bottom:16px">Describe any feature or improvement you want. Claude will give you exact implementation steps.</div>
+      <div style="margin-bottom:12px"><label class="label">What would you like?</label><textarea id="cr-input" class="input" style="height:100px;resize:vertical;line-height:1.6" placeholder="e.g. Add a birthday field, change color scheme, add calendar view…"></textarea></div>
+      <button class="btn-primary" onclick="submitChangeRequest()" style="width:100%;margin-bottom:16px" id="cr-btn">Get Implementation Guide</button>
+      <div id="cr-output"></div>
+      <div style="background:#0d0d12;border:1px solid #1e1e2e;border-radius:8px;padding:14px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:#7ec8c8;margin-bottom:8px">HOW TO APPLY CHANGES</div>
+        <div style="font-size:12px;color:#666;line-height:1.7">1. Copy the instructions above<br>2. Open index.html in GitHub → click ✏ Edit<br>3. Make the changes → Commit<br>4. Vercel auto-redeploys in 30 seconds!</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button class="btn-secondary" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+
+async function submitChangeRequest() {
+  const req=document.getElementById('cr-input')?.value;
+  if(!req?.trim())return;
+  const out=document.getElementById('cr-output');
+  const btn=document.getElementById('cr-btn');
+  if(!out||!btn)return;
+  out.innerHTML='<span class="spinner"></span> Claude is thinking…';
+  btn.disabled=true;
+  const sys=`You are a developer assistant for Relatio CRM — a single-file HTML/JS CRM app. When given a feature request, explain exactly what code changes to make in index.html. Be specific and actionable.`;
+  try{
+    const result=await callClaude([{role:'user',content:`Feature request for Relatio CRM:\n\n${req}\n\nExplain exactly what code changes to make in index.html.`}],sys);
+    out.innerHTML=`<div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:16px"><div class="label" style="margin-bottom:12px">Claude's Response</div><div style="font-size:13px;color:#ccc;line-height:1.75;white-space:pre-wrap">${result}</div><button onclick="navigator.clipboard.writeText(\`${(result||'').replace(/`/g,"'")}\`)" class="btn-secondary" style="margin-top:12px;font-size:11px;padding:5px 12px">Copy</button></div>`;
+  }catch(e){out.innerHTML=`<span style="color:#e07070">Error: ${e.message}</span>`;}
+  btn.disabled=false;
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+if(!state.settings.apiKey) openSettings();
+render();
+</script>
 </body>
 </html>
